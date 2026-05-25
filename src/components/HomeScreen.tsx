@@ -152,7 +152,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   }
 
   return (
-    <main className="min-h-dvh bg-stone-50 text-stone-950">
+    <main className="min-h-svh bg-stone-50 text-stone-950">
       <header className="sticky top-0 z-20 border-b border-stone-200 bg-stone-50/95 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-2xl items-center justify-between px-4">
           <div>
@@ -177,7 +177,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
             액션을 불러오는 중...
           </p>
         ) : actions.length === 0 ? (
-          <section className="flex min-h-[calc(100dvh-180px)] items-center justify-center text-center">
+          <section className="flex min-h-[calc(100svh-180px)] items-center justify-center text-center">
             <p className="text-sm text-stone-500">
               목표를 세우고 꾸준히 실천해보세요
             </p>

@@ -36,7 +36,7 @@ export function AuthScreen({ onGuestMode }: AuthScreenProps) {
   }
 
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-stone-50 p-5 text-stone-950">
+    <main className="flex min-h-svh items-center justify-center bg-stone-50 p-5 text-stone-950">
       <form
         className="w-full max-w-sm rounded-lg border border-stone-200 bg-white p-5 shadow-sm"
         onSubmit={handleSubmit}

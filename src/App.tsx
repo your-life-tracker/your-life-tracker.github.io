@@ -34,7 +34,7 @@ export default function App() {
 
   if (!isSupabaseConfigured && !isGuestMode) {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-stone-50 p-6 text-stone-950">
+      <main className="flex min-h-svh items-center justify-center bg-stone-50 p-6 text-stone-950">
         <section className="w-full max-w-sm rounded-lg border border-stone-200 bg-white p-5 shadow-sm">
           <h1 className="text-xl font-semibold">Supabase 설정 필요</h1>
           <p className="mt-2 text-sm leading-6 text-stone-600">
@@ -55,7 +55,7 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <main className="flex min-h-dvh items-center justify-center bg-stone-50 text-sm text-stone-500">
+      <main className="flex min-h-svh items-center justify-center bg-stone-50 text-sm text-stone-500">
         세션을 확인하는 중...
       </main>
     );
