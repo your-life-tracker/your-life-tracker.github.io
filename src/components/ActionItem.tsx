@@ -1,6 +1,7 @@
 import { Archive, Check, Minus, Plus } from "lucide-react";
 import { Button } from "./ui/Button";
 import { formatAmount } from "../lib/periods";
+import { cn } from "../lib/utils";
 import type { Action } from "../lib/types";
 
 type ActionItemProps = {
@@ -39,7 +40,14 @@ export function ActionItem({
         >
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="truncate text-base font-semibold text-stone-950">
+              <h3
+                className={cn(
+                  "truncate text-base font-semibold",
+                  isComplete
+                    ? "text-stone-400 line-through decoration-stone-300"
+                    : "text-stone-950",
+                )}
+              >
                 {action.name}
               </h3>
               {isComplete ? (
