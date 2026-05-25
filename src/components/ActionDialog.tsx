@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
 import { SegmentedControl } from "./ui/SegmentedControl";
@@ -28,9 +28,12 @@ export function ActionDialog({
   const [name, setName] = useState("");
   const [period, setPeriod] = useState<ActionPeriod>("weekly");
   const [unit, setUnit] = useState<ActionUnit>("count");
-  const [target, setTarget] = useState("3");
+  const [target, setTarget] = useState(3);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const targetStep = unit === "minutes" ? 0.5 : 1;
+  const minimumTarget = unit === "minutes" ? 0.5 : 1;
+  const targetLabel = unit === "minutes" ? `${target}시간` : `${target}회`;
 
   useEffect(() => {
     if (!open) {
@@ -43,12 +46,11 @@ export function ActionDialog({
     event.preventDefault();
     setError("");
 
-    const parsedTarget = Number(target);
     if (!name.trim()) {
       setError("이름을 입력하세요.");
       return;
     }
-    if (!Number.isFinite(parsedTarget) || parsedTarget <= 0) {
+    if (target < minimumTarget) {
       setError("목표량은 0보다 큰 숫자여야 합니다.");
       return;
     }
@@ -59,7 +61,7 @@ export function ActionDialog({
         name: name.trim(),
         period,
         unit,
-        targetAmount: unit === "minutes" ? Math.round(parsedTarget * 60) : parsedTarget,
+        targetAmount: unit === "minutes" ? Math.round(target * 60) : target,
       });
       onClose();
     } catch (mutationError) {
@@ -127,7 +129,7 @@ export function ActionDialog({
                   value={unit}
                   onChange={(nextUnit) => {
                     setUnit(nextUnit);
-                    setTarget(nextUnit === "minutes" ? "5" : "3");
+                    setTarget(nextUnit === "minutes" ? 5 : 3);
                   }}
                   options={[
                     { label: "횟수", value: "count" },
@@ -137,17 +139,37 @@ export function ActionDialog({
               </div>
             </div>
 
-            <label className="block text-sm font-medium text-stone-700">
-              목표량 {unit === "minutes" ? "(시간)" : "(횟수)"}
-              <Input
-                className="mt-2"
-                type="number"
-                min="0"
-                step={unit === "minutes" ? "0.5" : "1"}
-                value={target}
-                onChange={(event) => setTarget(event.target.value)}
-              />
-            </label>
+            <div>
+              <span className="text-sm font-medium text-stone-700">
+                목표량 {unit === "minutes" ? "(시간)" : "(횟수)"}
+              </span>
+              <div className="mt-2 grid grid-cols-[44px_minmax(0,1fr)_44px] items-center overflow-hidden rounded-md border border-stone-200 bg-white">
+                <button
+                  type="button"
+                  className="flex h-11 items-center justify-center text-stone-700 transition hover:bg-stone-100 disabled:pointer-events-none disabled:opacity-35"
+                  aria-label="목표량 감소"
+                  disabled={target <= minimumTarget}
+                  onClick={() =>
+                    setTarget((current) =>
+                      Math.max(minimumTarget, current - targetStep),
+                    )
+                  }
+                >
+                  <Minus size={18} aria-hidden />
+                </button>
+                <div className="flex h-11 min-w-0 items-center justify-center border-x border-stone-200 px-3 text-sm font-semibold text-stone-950">
+                  {targetLabel}
+                </div>
+                <button
+                  type="button"
+                  className="flex h-11 items-center justify-center text-stone-700 transition hover:bg-stone-100"
+                  aria-label="목표량 증가"
+                  onClick={() => setTarget((current) => current + targetStep)}
+                >
+                  <Plus size={18} aria-hidden />
+                </button>
+              </div>
+            </div>
 
             {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
