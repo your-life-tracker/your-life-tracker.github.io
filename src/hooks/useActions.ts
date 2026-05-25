@@ -16,6 +16,16 @@ import {
   type AdjustEntryInput,
   type CreateActionInput,
 } from "../api/actions";
+import {
+  adjustGuestEntry,
+  archiveGuestAction,
+  createGuestAction,
+  fetchGuestActionDailyEntries,
+  fetchGuestActionHistory,
+  fetchGuestActions,
+  fetchGuestCurrentDailyEntries,
+  fetchGuestCurrentEntries,
+} from "../lib/guestStorage";
 import { getCurrentPeriod, toDateKey } from "../lib/periods";
 import type { Action, ActionDailyEntry, ActionEntry } from "../lib/types";
 
@@ -30,24 +40,29 @@ export const actionKeys = {
     ["action-history", userId, actionIds.join(",")] as const,
 };
 
-export function useActionsQuery(userId: string) {
+export function useActionsQuery(userId: string, isGuest = false) {
   return useQuery({
     queryKey: actionKeys.actions(userId),
-    queryFn: () => fetchActions(userId),
+    queryFn: () =>
+      isGuest ? fetchGuestActions(userId) : fetchActions(userId),
   });
 }
 
-export function useCurrentEntriesQuery(userId: string) {
+export function useCurrentEntriesQuery(userId: string, isGuest = false) {
   return useQuery({
     queryKey: actionKeys.currentEntries(userId),
-    queryFn: () => fetchCurrentEntries(userId),
+    queryFn: () =>
+      isGuest ? fetchGuestCurrentEntries(userId) : fetchCurrentEntries(userId),
   });
 }
 
-export function useCurrentDailyEntriesQuery(userId: string) {
+export function useCurrentDailyEntriesQuery(userId: string, isGuest = false) {
   return useQuery({
     queryKey: actionKeys.currentDailyEntries(userId),
-    queryFn: () => fetchCurrentDailyEntries(userId),
+    queryFn: () =>
+      isGuest
+        ? fetchGuestCurrentDailyEntries(userId)
+        : fetchCurrentDailyEntries(userId),
   });
 }
 
@@ -55,31 +70,44 @@ export function useActionDailyEntriesQuery(
   userId: string,
   actionId: string,
   monthDate: Date,
+  isGuest = false,
 ) {
   const monthKey = toDateKey(new Date(monthDate.getFullYear(), monthDate.getMonth(), 1));
 
   return useQuery({
     queryKey: actionKeys.dailyEntries(userId, actionId, monthKey),
-    queryFn: () => fetchActionDailyEntries(userId, actionId, monthDate),
+    queryFn: () =>
+      isGuest
+        ? fetchGuestActionDailyEntries(userId, actionId, monthDate)
+        : fetchActionDailyEntries(userId, actionId, monthDate),
   });
 }
 
-export function useActionHistoryQuery(userId: string, actions: Action[]) {
+export function useActionHistoryQuery(
+  userId: string,
+  actions: Action[],
+  isGuest = false,
+) {
   const actionIds = actions.map((action) => action.id).sort();
 
   return useQuery({
     queryKey: actionKeys.history(userId, actionIds),
-    queryFn: () => fetchActionHistory(userId, actionIds),
+    queryFn: () =>
+      isGuest
+        ? fetchGuestActionHistory(userId, actionIds)
+        : fetchActionHistory(userId, actionIds),
     enabled: actionIds.length > 0,
   });
 }
 
-export function useCreateActionMutation(userId: string) {
+export function useCreateActionMutation(userId: string, isGuest = false) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: Omit<CreateActionInput, "userId">) =>
-      createAction({ ...input, userId }),
+    mutationFn: async (input: Omit<CreateActionInput, "userId">) =>
+      isGuest
+        ? createGuestAction({ ...input, userId })
+        : await createAction({ ...input, userId }),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: actionKeys.actions(userId),
@@ -88,11 +116,12 @@ export function useCreateActionMutation(userId: string) {
   });
 }
 
-export function useArchiveActionMutation(userId: string) {
+export function useArchiveActionMutation(userId: string, isGuest = false) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: archiveAction,
+    mutationFn: async (actionId: string) =>
+      isGuest ? archiveGuestAction(actionId) : await archiveAction(actionId),
     onMutate: async (actionId) => {
       const key = actionKeys.actions(userId);
       await queryClient.cancelQueries({ queryKey: key });
@@ -117,12 +146,14 @@ export function useArchiveActionMutation(userId: string) {
   });
 }
 
-export function useAdjustEntryMutation(userId: string) {
+export function useAdjustEntryMutation(userId: string, isGuest = false) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: Omit<AdjustEntryInput, "userId">) =>
-      adjustEntry({ ...input, userId }),
+    mutationFn: async (input: Omit<AdjustEntryInput, "userId">) =>
+      isGuest
+        ? adjustGuestEntry({ ...input, userId })
+        : await adjustEntry({ ...input, userId }),
     onMutate: async (input) => {
       const currentKey = actionKeys.currentEntries(userId);
       const currentDailyKey = actionKeys.currentDailyEntries(userId);

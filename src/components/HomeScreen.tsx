@@ -1,4 +1,3 @@
-import type { Session } from "@supabase/supabase-js";
 import type { ReactNode } from "react";
 import { overlay } from "overlay-kit";
 import { LogOut, Plus } from "lucide-react";
@@ -23,25 +22,30 @@ import {
 } from "../lib/periods";
 import { calculateStreak } from "../lib/streak";
 import { supabase } from "../lib/supabase";
+import type { HomeUser } from "../lib/authMode";
 import type { Action, ActionEntry } from "../lib/types";
 
 type HomeScreenProps = {
-  session: Session;
+  user: HomeUser;
+  onSignOut: () => void;
 };
 
-export function HomeScreen({ session }: HomeScreenProps) {
-  const userId = session.user.id;
-  const actionsQuery = useActionsQuery(userId);
-  const currentEntriesQuery = useCurrentEntriesQuery(userId);
-  const currentDailyEntriesQuery = useCurrentDailyEntriesQuery(userId);
+export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
+  const userId = user.id;
+  const actionsQuery = useActionsQuery(userId, user.isGuest);
+  const currentEntriesQuery = useCurrentEntriesQuery(userId, user.isGuest);
+  const currentDailyEntriesQuery = useCurrentDailyEntriesQuery(
+    userId,
+    user.isGuest,
+  );
   const actions = actionsQuery.data ?? [];
   const currentEntries = currentEntriesQuery.data ?? [];
   const currentDailyEntries = currentDailyEntriesQuery.data ?? [];
-  const historyQuery = useActionHistoryQuery(userId, actions);
+  const historyQuery = useActionHistoryQuery(userId, actions, user.isGuest);
   const historyEntries = historyQuery.data ?? [];
-  const createAction = useCreateActionMutation(userId);
-  const archiveAction = useArchiveActionMutation(userId);
-  const adjustEntry = useAdjustEntryMutation(userId);
+  const createAction = useCreateActionMutation(userId, user.isGuest);
+  const archiveAction = useArchiveActionMutation(userId, user.isGuest);
+  const adjustEntry = useAdjustEntryMutation(userId, user.isGuest);
 
   const weeklyPeriod = getCurrentPeriod("weekly");
   const monthlyPeriod = getCurrentPeriod("monthly");
@@ -76,6 +80,7 @@ export function HomeScreen({ session }: HomeScreenProps) {
       <ActionHistoryDialog
         action={action}
         userId={userId}
+        isGuest={user.isGuest}
         open={isOpen}
         onClose={close}
         onExit={unmount}
@@ -135,14 +140,20 @@ export function HomeScreen({ session }: HomeScreenProps) {
         <div className="mx-auto flex h-16 w-full max-w-2xl items-center justify-between px-4">
           <div>
             <h1 className="text-lg font-semibold">Life Tracker</h1>
-            <p className="text-xs text-stone-500">{session.user.email}</p>
+            <p className="text-xs text-stone-500">{user.email}</p>
           </div>
           <Button
             type="button"
             variant="ghost"
             size="icon"
             aria-label="로그아웃"
-            onClick={() => void supabase.auth.signOut()}
+            onClick={() => {
+              if (user.isGuest) {
+                onSignOut();
+                return;
+              }
+              void supabase.auth.signOut().then(onSignOut);
+            }}
           >
             <LogOut size={19} aria-hidden />
           </Button>

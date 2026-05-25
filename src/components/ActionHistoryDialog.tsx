@@ -26,6 +26,7 @@ import { Button } from "./ui/Button";
 type ActionHistoryDialogProps = {
   action: Action;
   userId: string;
+  isGuest?: boolean;
   open: boolean;
   onClose: () => void;
   onExit: () => void;
@@ -36,6 +37,7 @@ const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
 export function ActionHistoryDialog({
   action,
   userId,
+  isGuest = false,
   open,
   onClose,
   onExit,
@@ -47,6 +49,7 @@ export function ActionHistoryDialog({
     userId,
     action.id,
     monthDate,
+    isGuest,
   );
   const amountByDate = useMemo(
     () =>
