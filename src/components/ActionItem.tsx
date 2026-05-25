@@ -7,7 +7,6 @@ import type { Action } from "../lib/types";
 type ActionItemProps = {
   action: Action;
   amount: number;
-  streak: number;
   onAdjust: (delta: number) => void;
   onArchive: () => void;
   onOpenHistory: () => void;
@@ -19,7 +18,6 @@ type ActionItemProps = {
 export function ActionItem({
   action,
   amount,
-  streak,
   onAdjust,
   onArchive,
   onOpenHistory,
@@ -28,7 +26,6 @@ export function ActionItem({
   isArchiving,
 }: ActionItemProps) {
   const isComplete = amount >= action.target_amount;
-  const periodLabel = action.period === "weekly" ? "주" : "개월";
 
   return (
     <article className="grid gap-3 py-4 max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm">
@@ -59,9 +56,6 @@ export function ActionItem({
             <p className="mt-1 text-sm text-stone-500">
               {formatAmount(amount, action.unit)} /{" "}
               {formatAmount(action.target_amount, action.unit)}
-              <span className="mx-2 text-stone-300">|</span>
-              {streak}
-              {periodLabel} 연속
             </p>
           </div>
         </button>

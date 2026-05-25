@@ -62,8 +62,8 @@ export function ActionHistoryDialog({
 }: ActionHistoryDialogProps) {
   const [monthDate, setMonthDate] = useState(() => startOfMonth(new Date()));
   const currentMonth = useMemo(() => startOfMonth(new Date()), []);
-  const targetSummary = useMemo(() => formatTargetSummary(action), [action]);
   const isViewingCurrentMonth = isSameMonth(monthDate, currentMonth);
+  const targetSummary = useMemo(() => formatTargetSummary(action), [action]);
   const firstDailyEntryQuery = useActionFirstDailyEntryQuery(
     userId,
     action.id,
@@ -142,12 +142,9 @@ export function ActionHistoryDialog({
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <Dialog.Title className="text-lg font-semibold text-stone-950">
-                기록 조회
+                {action.name} ({targetSummary})
               </Dialog.Title>
               <Dialog.Description className="mt-1 space-y-1 text-sm text-stone-500">
-                <span className="block truncate">
-                  {action.name} ({targetSummary})
-                </span>
                 <span className="block text-xs text-stone-400">
                   최초 시작일:{" "}
                   {startDate ? format(startDate, "yyyy년 M월 d일") : "-"}

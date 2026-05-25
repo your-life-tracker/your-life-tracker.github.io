@@ -8,7 +8,6 @@ import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
 import { SignOutConfirmDialog } from "./SignOutConfirmDialog";
 import {
-  useActionHistoryQuery,
   useCurrentDailyEntriesQuery,
   useActionsQuery,
   useAdjustEntryMutation,
@@ -21,10 +20,9 @@ import {
   formatWeeklyRange,
   getCurrentPeriod,
 } from "../lib/periods";
-import { calculateStreak } from "../lib/streak";
 import { supabase } from "../lib/supabase";
 import type { HomeUser } from "../lib/authMode";
-import type { Action, ActionEntry } from "../lib/types";
+import type { Action } from "../lib/types";
 
 type HomeScreenProps = {
   user: HomeUser;
@@ -42,8 +40,6 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   const actions = actionsQuery.data ?? [];
   const currentEntries = currentEntriesQuery.data ?? [];
   const currentDailyEntries = currentDailyEntriesQuery.data ?? [];
-  const historyQuery = useActionHistoryQuery(userId, actions, user.isGuest);
-  const historyEntries = historyQuery.data ?? [];
   const createAction = useCreateActionMutation(userId, user.isGuest);
   const archiveAction = useArchiveActionMutation(userId, user.isGuest);
   const adjustEntry = useAdjustEntryMutation(userId, user.isGuest);
@@ -125,8 +121,6 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   function renderAction(action: Action) {
     const amount = getCurrentAmount(action);
     const todayAmount = getTodayAmount(action);
-    const period = action.period === "weekly" ? weeklyPeriod : monthlyPeriod;
-    const mergedEntries = mergeEntries(historyEntries, currentEntries);
 
     return (
       <ActionItem
@@ -134,7 +128,6 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         action={action}
         amount={amount}
         todayAmount={todayAmount}
-        streak={calculateStreak(action, mergedEntries, period.startKey)}
         isAdjusting={adjustEntry.isPending}
         isArchiving={archiveAction.isPending}
         onOpenHistory={() => openActionHistoryDialog(action)}
@@ -193,13 +186,13 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         ) : (
           <div className="space-y-8">
             <PeriodSection
-              title="주간"
+              title="주 단위"
               subtitle={formatWeeklyRange(weeklyPeriod)}
               actions={weeklyActions}
               renderAction={renderAction}
             />
             <PeriodSection
-              title="월간"
+              title="월 단위"
               subtitle={formatMonthlyRange(monthlyPeriod)}
               actions={monthlyActions}
               renderAction={renderAction}
@@ -248,12 +241,4 @@ function PeriodSection({
       )}
     </section>
   );
-}
-
-function mergeEntries(historyEntries: ActionEntry[], currentEntries: ActionEntry[]) {
-  const byKey = new Map<string, ActionEntry>();
-  [...historyEntries, ...currentEntries].forEach((entry) => {
-    byKey.set(`${entry.action_id}:${entry.period_start}`, entry);
-  });
-  return [...byKey.values()];
 }
