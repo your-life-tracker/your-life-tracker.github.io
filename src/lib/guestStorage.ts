@@ -1,4 +1,4 @@
-import { endOfMonth, startOfMonth, subYears } from "date-fns";
+import { subYears } from "date-fns";
 import { getCurrentPeriod, toDateKey } from "./periods";
 import type {
   Action,
@@ -107,10 +107,11 @@ export function fetchGuestActionHistory(userId: string, actionIds: string[]) {
 export function fetchGuestActionDailyEntries(
   userId: string,
   actionId: string,
-  monthDate: Date,
+  startDate: Date,
+  endDate: Date,
 ) {
-  const startKey = toDateKey(startOfMonth(monthDate));
-  const endKey = toDateKey(endOfMonth(monthDate));
+  const startKey = toDateKey(startDate);
+  const endKey = toDateKey(endDate);
 
   return readGuestData()
     .dailyEntries.filter(

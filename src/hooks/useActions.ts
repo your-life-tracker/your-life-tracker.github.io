@@ -1,4 +1,11 @@
 import {
+  addDays,
+  endOfMonth,
+  endOfWeek,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns";
+import {
   useMutation,
   useQuery,
   useQueryClient,
@@ -36,13 +43,33 @@ export const actionKeys = {
   currentEntries: (userId: string) => ["current-entries", userId] as const,
   currentDailyEntries: (userId: string) =>
     ["current-daily-entries", userId] as const,
-  dailyEntries: (userId: string, actionId: string, monthKey: string) =>
-    ["action-daily-entries", userId, actionId, monthKey] as const,
+  dailyEntries: (
+    userId: string,
+    actionId: string,
+    startKey: string,
+    endKey: string,
+  ) => ["action-daily-entries", userId, actionId, startKey, endKey] as const,
   firstDailyEntry: (userId: string, actionId: string) =>
     ["action-first-daily-entry", userId, actionId] as const,
   history: (userId: string, actionIds: string[]) =>
     ["action-history", userId, actionIds.join(",")] as const,
 };
+
+function getCalendarRange(monthDate: Date) {
+  const monthStart = startOfMonth(monthDate);
+  const monthEnd = endOfMonth(monthDate);
+  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const minimumCalendarEnd = addDays(calendarStart, 41);
+  const monthCalendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+
+  return {
+    start: calendarStart,
+    end:
+      monthCalendarEnd > minimumCalendarEnd
+        ? monthCalendarEnd
+        : minimumCalendarEnd,
+  };
+}
 
 export function useActionsQuery(userId: string, isGuest = false) {
   return useQuery({
@@ -76,14 +103,26 @@ export function useActionDailyEntriesQuery(
   monthDate: Date,
   isGuest = false,
 ) {
-  const monthKey = toDateKey(new Date(monthDate.getFullYear(), monthDate.getMonth(), 1));
+  const calendarRange = getCalendarRange(monthDate);
+  const startKey = toDateKey(calendarRange.start);
+  const endKey = toDateKey(calendarRange.end);
 
   return useQuery({
-    queryKey: actionKeys.dailyEntries(userId, actionId, monthKey),
+    queryKey: actionKeys.dailyEntries(userId, actionId, startKey, endKey),
     queryFn: () =>
       isGuest
-        ? fetchGuestActionDailyEntries(userId, actionId, monthDate)
-        : fetchActionDailyEntries(userId, actionId, monthDate),
+        ? fetchGuestActionDailyEntries(
+            userId,
+            actionId,
+            calendarRange.start,
+            calendarRange.end,
+          )
+        : fetchActionDailyEntries(
+            userId,
+            actionId,
+            calendarRange.start,
+            calendarRange.end,
+          ),
   });
 }
 
