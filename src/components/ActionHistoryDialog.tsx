@@ -94,7 +94,7 @@ export function ActionHistoryDialog({
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-stone-950/35 data-[state=closed]:animate-out data-[state=open]:animate-in" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-stone-200 bg-white p-5 shadow-xl outline-none">
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-32px)] w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-stone-200 bg-white p-5 shadow-xl outline-none max-[719px]:max-h-[calc(100dvh-16px)] max-[719px]:w-[calc(100%-16px)] max-[719px]:p-3">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <Dialog.Title className="text-lg font-semibold text-stone-950">
@@ -143,11 +143,11 @@ export function ActionHistoryDialog({
             </Button>
           </div>
 
-          <div className="mt-4 grid grid-cols-7 gap-1">
+          <div className="mt-4 grid grid-cols-7 gap-1 max-[719px]:gap-0.5">
             {WEEKDAYS.map((weekday) => (
               <div
                 key={weekday}
-                className="flex h-8 items-center justify-center text-xs font-medium text-stone-500"
+                className="flex h-8 min-w-0 items-center justify-center text-xs font-medium text-stone-500 max-[719px]:h-7"
               >
                 {weekday}
               </div>
@@ -160,7 +160,7 @@ export function ActionHistoryDialog({
               return (
                 <div
                   key={dayKey}
-                  className="flex aspect-square min-h-14 flex-col rounded-md border border-stone-100 bg-stone-50 p-1.5"
+                  className="flex aspect-square min-h-14 min-w-0 flex-col rounded-md border border-stone-100 bg-stone-50 p-1.5 max-[719px]:min-h-10 max-[719px]:rounded-sm max-[719px]:p-1 max-[360px]:min-h-9"
                 >
                   <span
                     className={
@@ -172,7 +172,7 @@ export function ActionHistoryDialog({
                     {format(day, "d")}
                   </span>
                   {amount > 0 ? (
-                    <span className="mt-auto truncate rounded bg-emerald-100 px-1.5 py-0.5 text-center text-[11px] font-semibold text-emerald-800">
+                    <span className="mt-auto w-full min-w-0 whitespace-nowrap rounded bg-emerald-100 px-1.5 py-0.5 text-center text-[11px] font-semibold leading-tight text-emerald-800 max-[719px]:px-0.5 max-[719px]:text-[10px] max-[360px]:text-[9px]">
                       {formatAmount(amount, action.unit)}
                     </span>
                   ) : null}
