@@ -185,9 +185,7 @@ export function ActionHistoryDialog({
             })}
           </div>
 
-          <div className="mt-4 min-h-5 text-center text-sm text-stone-500">
-            {dailyEntriesQuery.isFetching ? "기록을 불러오는 중..." : null}
-          </div>
+          <div className="mt-4 min-h-5" aria-hidden />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
