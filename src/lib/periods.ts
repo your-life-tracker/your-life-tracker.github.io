@@ -59,6 +59,11 @@ export function formatMonthlyRange(range: PeriodRange) {
   return format(range.start, "yyyy년 M월", { locale: ko });
 }
 
+export function formatCalendarMonth(date: Date, now = new Date()) {
+  const pattern = date.getFullYear() === now.getFullYear() ? "M월" : "yyyy년 M월";
+  return format(date, pattern, { locale: ko });
+}
+
 export function formatAmount(amount: number, unit: "count" | "minutes") {
   if (unit === "count") {
     return `${amount}회`;

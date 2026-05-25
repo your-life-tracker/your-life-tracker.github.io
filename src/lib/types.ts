@@ -22,6 +22,15 @@ export type ActionEntry = {
   updated_at: string;
 };
 
+export type ActionDailyEntry = {
+  id: string;
+  action_id: string;
+  user_id: string;
+  entry_date: string;
+  amount: number;
+  updated_at: string;
+};
+
 export type Database = {
   public: {
     Tables: {
@@ -53,6 +62,21 @@ export type Database = {
         };
         Update: Partial<
           Omit<ActionEntry, "id" | "action_id" | "user_id" | "period_start">
+        >;
+        Relationships: [];
+      };
+      action_daily_entries: {
+        Row: ActionDailyEntry;
+        Insert: {
+          id?: string;
+          action_id: string;
+          user_id: string;
+          entry_date: string;
+          amount: number;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Omit<ActionDailyEntry, "id" | "action_id" | "user_id" | "entry_date">
         >;
         Relationships: [];
       };

@@ -3,11 +3,13 @@ import type { ReactNode } from "react";
 import { overlay } from "overlay-kit";
 import { LogOut, Plus } from "lucide-react";
 import { ActionDialog } from "./ActionDialog";
+import { ActionHistoryDialog } from "./ActionHistoryDialog";
 import { ActionItem } from "./ActionItem";
 import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
 import {
   useActionHistoryQuery,
+  useCurrentDailyEntriesQuery,
   useActionsQuery,
   useAdjustEntryMutation,
   useArchiveActionMutation,
@@ -31,8 +33,10 @@ export function HomeScreen({ session }: HomeScreenProps) {
   const userId = session.user.id;
   const actionsQuery = useActionsQuery(userId);
   const currentEntriesQuery = useCurrentEntriesQuery(userId);
+  const currentDailyEntriesQuery = useCurrentDailyEntriesQuery(userId);
   const actions = actionsQuery.data ?? [];
   const currentEntries = currentEntriesQuery.data ?? [];
+  const currentDailyEntries = currentDailyEntriesQuery.data ?? [];
   const historyQuery = useActionHistoryQuery(userId, actions);
   const historyEntries = historyQuery.data ?? [];
   const createAction = useCreateActionMutation(userId);
@@ -67,6 +71,18 @@ export function HomeScreen({ session }: HomeScreenProps) {
     ));
   }
 
+  function openActionHistoryDialog(action: Action) {
+    overlay.open(({ isOpen, close, unmount }) => (
+      <ActionHistoryDialog
+        action={action}
+        userId={userId}
+        open={isOpen}
+        onClose={close}
+        onExit={unmount}
+      />
+    ));
+  }
+
   function getCurrentAmount(action: Action) {
     const period = action.period === "weekly" ? weeklyPeriod : monthlyPeriod;
     return (
@@ -77,8 +93,16 @@ export function HomeScreen({ session }: HomeScreenProps) {
     );
   }
 
+  function getTodayAmount(action: Action) {
+    return (
+      currentDailyEntries.find((entry) => entry.action_id === action.id)
+        ?.amount ?? 0
+    );
+  }
+
   function renderAction(action: Action) {
     const amount = getCurrentAmount(action);
+    const todayAmount = getTodayAmount(action);
     const period = action.period === "weekly" ? weeklyPeriod : monthlyPeriod;
     const mergedEntries = mergeEntries(historyEntries, currentEntries);
 
@@ -87,14 +111,17 @@ export function HomeScreen({ session }: HomeScreenProps) {
         key={action.id}
         action={action}
         amount={amount}
+        todayAmount={todayAmount}
         streak={calculateStreak(action, mergedEntries, period.startKey)}
         isAdjusting={adjustEntry.isPending}
         isArchiving={archiveAction.isPending}
+        onOpenHistory={() => openActionHistoryDialog(action)}
         onArchive={() => openArchiveConfirmDialog(action)}
         onAdjust={(delta) =>
           adjustEntry.mutate({
             action,
             currentAmount: amount,
+            currentTodayAmount: todayAmount,
             delta,
           })
         }

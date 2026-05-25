@@ -9,6 +9,8 @@ type ActionItemProps = {
   streak: number;
   onAdjust: (delta: number) => void;
   onArchive: () => void;
+  onOpenHistory: () => void;
+  todayAmount: number;
   isAdjusting?: boolean;
   isArchiving?: boolean;
 };
@@ -19,6 +21,8 @@ export function ActionItem({
   streak,
   onAdjust,
   onArchive,
+  onOpenHistory,
+  todayAmount,
   isAdjusting,
   isArchiving,
 }: ActionItemProps) {
@@ -28,25 +32,31 @@ export function ActionItem({
   return (
     <article className="grid gap-3 border-b border-stone-200 py-4 last:border-b-0">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="truncate text-base font-semibold text-stone-950">
-              {action.name}
-            </h3>
-            {isComplete ? (
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                <Check size={15} aria-label="목표 달성" />
-              </span>
-            ) : null}
+        <button
+          type="button"
+          className="-m-2 min-w-0 flex-1 rounded-md p-2 text-left outline-none transition hover:bg-stone-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
+          onClick={onOpenHistory}
+        >
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h3 className="truncate text-base font-semibold text-stone-950">
+                {action.name}
+              </h3>
+              {isComplete ? (
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                  <Check size={15} aria-label="목표 달성" />
+                </span>
+              ) : null}
+            </div>
+            <p className="mt-1 text-sm text-stone-500">
+              {formatAmount(amount, action.unit)} /{" "}
+              {formatAmount(action.target_amount, action.unit)}
+              <span className="mx-2 text-stone-300">|</span>
+              {streak}
+              {periodLabel} 연속
+            </p>
           </div>
-          <p className="mt-1 text-sm text-stone-500">
-            {formatAmount(amount, action.unit)} /{" "}
-            {formatAmount(action.target_amount, action.unit)}
-            <span className="mx-2 text-stone-300">|</span>
-            {streak}
-            {periodLabel} 연속
-          </p>
-        </div>
+        </button>
         <Button
           type="button"
           variant="ghost"
@@ -64,7 +74,7 @@ export function ActionItem({
           <Button
             type="button"
             variant="secondary"
-            disabled={isAdjusting || amount <= 0}
+            disabled={isAdjusting || amount <= 0 || todayAmount <= 0}
             onClick={() => onAdjust(-1)}
           >
             <Minus size={17} aria-hidden />
@@ -92,7 +102,11 @@ export function ActionItem({
               key={control.label}
               type="button"
               variant="secondary"
-              disabled={isAdjusting || amount + control.delta < 0}
+              disabled={
+                isAdjusting ||
+                amount + control.delta < 0 ||
+                todayAmount + control.delta < 0
+              }
               onClick={() => onAdjust(control.delta)}
               className="px-2"
             >

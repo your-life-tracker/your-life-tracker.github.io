@@ -1,7 +1,13 @@
-import { subYears } from "date-fns";
+import { endOfMonth, startOfMonth, subYears } from "date-fns";
 import { getCurrentPeriod, toDateKey } from "../lib/periods";
 import { supabase } from "../lib/supabase";
-import type { Action, ActionEntry, ActionPeriod, ActionUnit } from "../lib/types";
+import type {
+  Action,
+  ActionDailyEntry,
+  ActionEntry,
+  ActionPeriod,
+  ActionUnit,
+} from "../lib/types";
 
 export type CreateActionInput = {
   userId: string;
@@ -35,6 +41,39 @@ export async function fetchCurrentEntries(userId: string) {
 
   if (error) throw error;
   return data satisfies ActionEntry[];
+}
+
+export async function fetchCurrentDailyEntries(userId: string) {
+  const todayKey = toDateKey(new Date());
+  const { data, error } = await supabase
+    .from("action_daily_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("entry_date", todayKey);
+
+  if (error) throw error;
+  return data satisfies ActionDailyEntry[];
+}
+
+export async function fetchActionDailyEntries(
+  userId: string,
+  actionId: string,
+  monthDate: Date,
+) {
+  const startKey = toDateKey(startOfMonth(monthDate));
+  const endKey = toDateKey(endOfMonth(monthDate));
+
+  const { data, error } = await supabase
+    .from("action_daily_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("action_id", actionId)
+    .gte("entry_date", startKey)
+    .lte("entry_date", endKey)
+    .order("entry_date", { ascending: true });
+
+  if (error) throw error;
+  return data satisfies ActionDailyEntry[];
 }
 
 export async function fetchActionHistory(userId: string, actionIds: string[]) {
@@ -87,11 +126,18 @@ export type AdjustEntryInput = {
   userId: string;
   delta: number;
   currentAmount: number;
+  currentTodayAmount: number;
 };
 
 export async function adjustEntry(input: AdjustEntryInput) {
   const period = getCurrentPeriod(input.action.period);
-  const nextAmount = Math.max(0, input.currentAmount + input.delta);
+  const todayKey = toDateKey(new Date());
+  const appliedDelta =
+    input.delta < 0
+      ? -Math.min(Math.abs(input.delta), input.currentTodayAmount)
+      : input.delta;
+  const nextAmount = Math.max(0, input.currentAmount + appliedDelta);
+  const nextTodayAmount = Math.max(0, input.currentTodayAmount + appliedDelta);
 
   const { data, error } = await supabase
     .from("action_entries")
@@ -110,5 +156,21 @@ export async function adjustEntry(input: AdjustEntryInput) {
     .single();
 
   if (error) throw error;
+
+  const { error: dailyError } = await supabase
+    .from("action_daily_entries")
+    .upsert(
+      {
+        action_id: input.action.id,
+        user_id: input.userId,
+        entry_date: todayKey,
+        amount: nextTodayAmount,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "action_id,entry_date" },
+    );
+
+  if (dailyError) throw dailyError;
+
   return data satisfies ActionEntry;
 }
