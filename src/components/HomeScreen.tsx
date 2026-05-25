@@ -156,7 +156,15 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
       <header className="sticky top-0 z-20 border-b border-stone-200 bg-stone-50/95 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-2xl items-center justify-between px-4">
           <div>
-            <h1 className="text-lg font-semibold">Life Tracker</h1>
+            <h1 className="text-lg font-semibold">
+              <button
+                type="button"
+                className="rounded-md bg-transparent p-0 text-left text-inherit font-inherit leading-inherit text-inherit outline-none transition hover:text-stone-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
+                onClick={() => window.location.reload()}
+              >
+                Life Tracker
+              </button>
+            </h1>
             <p className="text-xs text-stone-500">{user.email}</p>
           </div>
           <Button
