@@ -4,6 +4,7 @@ import { overlay } from "overlay-kit";
 import { LogOut, Plus } from "lucide-react";
 import { ActionDialog } from "./ActionDialog";
 import { ActionItem } from "./ActionItem";
+import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
 import {
   useActionHistoryQuery,
@@ -54,6 +55,18 @@ export function HomeScreen({ session }: HomeScreenProps) {
     ));
   }
 
+  function openArchiveConfirmDialog(action: Action) {
+    overlay.open(({ isOpen, close, unmount }) => (
+      <ArchiveConfirmDialog
+        actionName={action.name}
+        open={isOpen}
+        onClose={close}
+        onExit={unmount}
+        onConfirm={() => archiveAction.mutateAsync(action.id)}
+      />
+    ));
+  }
+
   function getCurrentAmount(action: Action) {
     const period = action.period === "weekly" ? weeklyPeriod : monthlyPeriod;
     return (
@@ -77,7 +90,7 @@ export function HomeScreen({ session }: HomeScreenProps) {
         streak={calculateStreak(action, mergedEntries, period.startKey)}
         isAdjusting={adjustEntry.isPending}
         isArchiving={archiveAction.isPending}
-        onArchive={() => archiveAction.mutate(action.id)}
+        onArchive={() => openArchiveConfirmDialog(action)}
         onAdjust={(delta) =>
           adjustEntry.mutate({
             action,
