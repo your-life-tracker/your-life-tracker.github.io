@@ -43,6 +43,10 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   const createAction = useCreateActionMutation(userId, user.isGuest);
   const archiveAction = useArchiveActionMutation(userId, user.isGuest);
   const adjustEntry = useAdjustEntryMutation(userId, user.isGuest);
+  const isInitialLoading =
+    actionsQuery.isLoading ||
+    currentEntriesQuery.isLoading ||
+    currentDailyEntriesQuery.isLoading;
 
   const weeklyPeriod = getCurrentPeriod("weekly");
   const monthlyPeriod = getCurrentPeriod("monthly");
@@ -173,7 +177,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
       </header>
 
       <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-5">
-        {actionsQuery.isLoading ? (
+        {isInitialLoading ? (
           <p className="py-16 text-center text-sm text-stone-500">
             액션을 불러오는 중...
           </p>
