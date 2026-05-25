@@ -62,7 +62,7 @@ export function ArchiveConfirmDialog({
                 “{actionName}”{particle} 아카이브할까요?
               </Dialog.Title>
               <Dialog.Description className="mt-2 text-sm leading-6 text-stone-600">
-                아카이브하면 홈 화면에서 보이지 않게 됩니다.
+                홈 화면에서 보이지 않게 됩니다.
                 <br />
                 *현재 버전에선 복구가 불가합니다.
               </Dialog.Description>
