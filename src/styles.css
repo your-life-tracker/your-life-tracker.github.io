@@ -27,3 +27,7 @@ input,
 select {
   font: inherit;
 }
+
+button {
+  user-select: none;
+}
