@@ -95,7 +95,7 @@ export function ActionHistoryDialog({
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-stone-950/35 data-[state=closed]:animate-out data-[state=open]:animate-in" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-50 max-h-[calc(100svh-32px)] w-[calc(100%-32px)] max-w-lg -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-lg border border-stone-200 bg-white p-5 shadow-xl outline-none max-[719px]:max-h-[calc(100svh-16px)] max-[719px]:w-[calc(100%-16px)] max-[719px]:p-3">
+        <Dialog.Content className="fixed inset-x-2 top-2 z-50 max-h-[calc(100svh-16px)] overflow-y-auto rounded-lg border border-stone-200 bg-white p-3 shadow-xl outline-none sm:inset-x-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-32px)] sm:max-w-lg sm:max-h-[calc(100svh-32px)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:p-5">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <Dialog.Title className="text-lg font-semibold text-stone-950">
