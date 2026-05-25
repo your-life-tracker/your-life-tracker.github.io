@@ -26,6 +26,12 @@ export function ActionItem({
   isArchiving,
 }: ActionItemProps) {
   const isComplete = amount >= action.target_amount;
+  const previousAmount = Math.max(0, amount - todayAmount);
+  const previousProgress = Math.min(
+    100,
+    (previousAmount / action.target_amount) * 100,
+  );
+  const totalProgress = Math.min(100, (amount / action.target_amount) * 100);
 
   return (
     <article className="grid gap-3 py-4 max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm">
@@ -69,6 +75,26 @@ export function ActionItem({
         >
           <Archive size={18} aria-hidden />
         </Button>
+      </div>
+
+      <div
+        className="relative h-2 overflow-hidden rounded-full bg-stone-100"
+        aria-label={`진행률 ${formatAmount(amount, action.unit)} 중 오늘 ${formatAmount(Math.min(todayAmount, amount), action.unit)}`}
+      >
+        <div
+          className="absolute inset-y-0 left-0 w-full origin-left bg-emerald-300 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
+          style={{
+            transform: `scaleX(${totalProgress / 100})`,
+            willChange: "transform",
+          }}
+        />
+        <div
+          className="absolute inset-y-0 left-0 w-full origin-left bg-emerald-600 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
+          style={{
+            transform: `scaleX(${previousProgress / 100})`,
+            willChange: "transform",
+          }}
+        />
       </div>
 
       {action.unit === "count" ? (
