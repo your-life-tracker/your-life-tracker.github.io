@@ -76,18 +76,20 @@ export function ActionItem({
           <Button
             type="button"
             variant="secondary"
+            className="h-9"
             disabled={isAdjusting || amount <= 0 || todayAmount <= 0}
             onClick={() => onAdjust(-1)}
           >
-            <Minus size={17} aria-hidden />
+            <Minus size={16} aria-hidden />
           </Button>
           <Button
             type="button"
             variant="secondary"
+            className="h-9"
             disabled={isAdjusting}
             onClick={() => onAdjust(1)}
           >
-            <Plus size={17} aria-hidden />
+            <Plus size={16} aria-hidden />
           </Button>
         </div>
       ) : (
@@ -106,10 +108,10 @@ export function ActionItem({
                 todayAmount + control.delta < 0
               }
               onClick={() => onAdjust(control.delta)}
-              className="px-2"
+              className="h-9 px-2"
               aria-label={control.delta < 0 ? "30분 감소" : "30분 증가"}
             >
-              <control.icon size={17} aria-hidden />
+              <control.icon size={16} aria-hidden />
             </Button>
           ))}
         </div>
