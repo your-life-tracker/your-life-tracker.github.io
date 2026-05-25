@@ -179,7 +179,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         ) : actions.length === 0 ? (
           <section className="flex min-h-[calc(100dvh-180px)] items-center justify-center text-center">
             <p className="text-sm text-stone-500">
-              액션을 생성해서 흐름을 기록해보세요
+              목표를 세우고 꾸준히 실천해보세요
             </p>
           </section>
         ) : (
