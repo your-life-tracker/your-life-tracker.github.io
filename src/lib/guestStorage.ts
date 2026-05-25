@@ -123,6 +123,19 @@ export function fetchGuestActionDailyEntries(
     .sort((a, b) => a.entry_date.localeCompare(b.entry_date));
 }
 
+export function fetchGuestFirstActionDailyEntry(userId: string, actionId: string) {
+  return (
+    readGuestData()
+      .dailyEntries.filter(
+        (entry) =>
+          entry.user_id === userId &&
+          entry.action_id === actionId &&
+          entry.amount > 0,
+      )
+      .sort((a, b) => a.entry_date.localeCompare(b.entry_date))[0] ?? null
+  );
+}
+
 export function createGuestAction(input: GuestCreateActionInput) {
   const data = readGuestData();
   const action: Action = {

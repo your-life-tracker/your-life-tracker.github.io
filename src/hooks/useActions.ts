@@ -9,6 +9,7 @@ import {
   archiveAction,
   createAction,
   fetchActionDailyEntries,
+  fetchFirstActionDailyEntry,
   fetchActionHistory,
   fetchActions,
   fetchCurrentDailyEntries,
@@ -21,6 +22,7 @@ import {
   archiveGuestAction,
   createGuestAction,
   fetchGuestActionDailyEntries,
+  fetchGuestFirstActionDailyEntry,
   fetchGuestActionHistory,
   fetchGuestActions,
   fetchGuestCurrentDailyEntries,
@@ -36,6 +38,8 @@ export const actionKeys = {
     ["current-daily-entries", userId] as const,
   dailyEntries: (userId: string, actionId: string, monthKey: string) =>
     ["action-daily-entries", userId, actionId, monthKey] as const,
+  firstDailyEntry: (userId: string, actionId: string) =>
+    ["action-first-daily-entry", userId, actionId] as const,
   history: (userId: string, actionIds: string[]) =>
     ["action-history", userId, actionIds.join(",")] as const,
 };
@@ -80,6 +84,20 @@ export function useActionDailyEntriesQuery(
       isGuest
         ? fetchGuestActionDailyEntries(userId, actionId, monthDate)
         : fetchActionDailyEntries(userId, actionId, monthDate),
+  });
+}
+
+export function useActionFirstDailyEntryQuery(
+  userId: string,
+  actionId: string,
+  isGuest = false,
+) {
+  return useQuery({
+    queryKey: actionKeys.firstDailyEntry(userId, actionId),
+    queryFn: () =>
+      isGuest
+        ? fetchGuestFirstActionDailyEntry(userId, actionId)
+        : fetchFirstActionDailyEntry(userId, actionId),
   });
 }
 
@@ -292,6 +310,9 @@ export function useAdjustEntryMutation(userId: string, isGuest = false) {
       });
       void queryClient.invalidateQueries({
         queryKey: ["action-daily-entries", userId],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["action-first-daily-entry", userId],
       });
     },
   });

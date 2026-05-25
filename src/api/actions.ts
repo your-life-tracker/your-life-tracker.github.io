@@ -76,6 +76,24 @@ export async function fetchActionDailyEntries(
   return data satisfies ActionDailyEntry[];
 }
 
+export async function fetchFirstActionDailyEntry(
+  userId: string,
+  actionId: string,
+) {
+  const { data, error } = await supabase
+    .from("action_daily_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("action_id", actionId)
+    .gt("amount", 0)
+    .order("entry_date", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as ActionDailyEntry | null;
+}
+
 export async function fetchActionHistory(userId: string, actionIds: string[]) {
   if (actionIds.length === 0) return [] satisfies ActionEntry[];
 

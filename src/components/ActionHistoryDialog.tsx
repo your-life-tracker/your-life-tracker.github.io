@@ -8,14 +8,19 @@ import {
   format,
   isSameMonth,
   isAfter,
+  isBefore,
   isToday,
+  parseISO,
   startOfMonth,
   startOfWeek,
   subMonths,
 } from "date-fns";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useActionDailyEntriesQuery } from "../hooks/useActions";
+import {
+  useActionDailyEntriesQuery,
+  useActionFirstDailyEntryQuery,
+} from "../hooks/useActions";
 import {
   formatAmount,
   formatCalendarMonth,
@@ -35,6 +40,18 @@ type ActionHistoryDialogProps = {
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
+function formatTargetSummary(action: Action) {
+  const periodLabel = action.period === "weekly" ? "주" : "월";
+
+  if (action.unit === "count") {
+    return `${periodLabel} ${action.target_amount}회`;
+  }
+
+  const hours = action.target_amount / 60;
+  const formattedHours = Number.isInteger(hours) ? hours : hours.toFixed(1);
+  return `${periodLabel} ${formattedHours}시간`;
+}
+
 export function ActionHistoryDialog({
   action,
   userId,
@@ -45,7 +62,28 @@ export function ActionHistoryDialog({
 }: ActionHistoryDialogProps) {
   const [monthDate, setMonthDate] = useState(() => startOfMonth(new Date()));
   const currentMonth = useMemo(() => startOfMonth(new Date()), []);
+  const targetSummary = useMemo(() => formatTargetSummary(action), [action]);
   const isViewingCurrentMonth = isSameMonth(monthDate, currentMonth);
+  const firstDailyEntryQuery = useActionFirstDailyEntryQuery(
+    userId,
+    action.id,
+    isGuest,
+  );
+  const startDate = useMemo(
+    () =>
+      firstDailyEntryQuery.data
+        ? parseISO(firstDailyEntryQuery.data.entry_date)
+        : null,
+    [firstDailyEntryQuery.data],
+  );
+  const startMonth = useMemo(
+    () => (startDate ? startOfMonth(startDate) : null),
+    [startDate],
+  );
+  const isViewingStartMonth =
+    startMonth !== null && isSameMonth(monthDate, startMonth);
+  const isPreviousDisabled =
+    firstDailyEntryQuery.isLoading || startMonth === null || isViewingStartMonth;
   const dailyEntriesQuery = useActionDailyEntriesQuery(
     userId,
     action.id,
@@ -88,8 +126,13 @@ export function ActionHistoryDialog({
   useEffect(() => {
     if (isAfter(monthDate, currentMonth)) {
       setMonthDate(currentMonth);
+      return;
     }
-  }, [currentMonth, monthDate]);
+
+    if (startMonth !== null && isBefore(monthDate, startMonth)) {
+      setMonthDate(startMonth);
+    }
+  }, [currentMonth, monthDate, startMonth]);
 
   return (
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
@@ -101,8 +144,14 @@ export function ActionHistoryDialog({
               <Dialog.Title className="text-lg font-semibold text-stone-950">
                 기록 조회
               </Dialog.Title>
-              <Dialog.Description className="mt-1 truncate text-sm text-stone-500">
-                {action.name}
+              <Dialog.Description className="mt-1 space-y-1 text-sm text-stone-500">
+                <span className="block truncate">
+                  {action.name} ({targetSummary})
+                </span>
+                <span className="block text-xs text-stone-400">
+                  최초 시작일:{" "}
+                  {startDate ? format(startDate, "yyyy년 M월 d일") : "-"}
+                </span>
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
@@ -118,7 +167,17 @@ export function ActionHistoryDialog({
               variant="secondary"
               size="icon"
               aria-label="이전 달"
-              onClick={() => setMonthDate((current) => subMonths(current, 1))}
+              disabled={isPreviousDisabled}
+              onClick={() =>
+                setMonthDate((current) => {
+                  if (startMonth === null) return current;
+
+                  const previousMonth = subMonths(current, 1);
+                  return isBefore(previousMonth, startMonth)
+                    ? startMonth
+                    : previousMonth;
+                })
+              }
             >
               <ChevronLeft size={18} aria-hidden />
             </Button>
