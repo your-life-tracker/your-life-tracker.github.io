@@ -86,7 +86,7 @@ export function ActionDialog({
                 액션 생성
               </Dialog.Title>
               <Dialog.Description className="mt-1 text-sm text-stone-500">
-                추적할 반복 행동과 이번 기간의 목표를 정하세요.
+                어떤 행동을 얼마나 자주 실천할지 정해보세요.
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
