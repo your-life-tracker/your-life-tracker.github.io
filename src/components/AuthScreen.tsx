@@ -81,7 +81,7 @@ export function AuthScreen({ onGuestMode }: AuthScreenProps) {
           variant="secondary"
           onClick={onGuestMode}
         >
-          게스트 모드로 시작
+          게스트 모드로 시작하기
         </Button>
       </form>
     </main>
