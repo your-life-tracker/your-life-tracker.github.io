@@ -78,7 +78,6 @@ export function ActionItem({
             onClick={() => onAdjust(-1)}
           >
             <Minus size={17} aria-hidden />
-            1
           </Button>
           <Button
             type="button"
@@ -87,16 +86,13 @@ export function ActionItem({
             onClick={() => onAdjust(1)}
           >
             <Plus size={17} aria-hidden />
-            1
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {[
-            { label: "-30m", delta: -30 },
-            { label: "-1h", delta: -60 },
-            { label: "+30m", delta: 30 },
-            { label: "+1h", delta: 60 },
+            { label: "-", delta: -30, icon: Minus },
+            { label: "+", delta: 30, icon: Plus },
           ].map((control) => (
             <Button
               key={control.label}
@@ -109,8 +105,9 @@ export function ActionItem({
               }
               onClick={() => onAdjust(control.delta)}
               className="px-2"
+              aria-label={control.delta < 0 ? "30분 감소" : "30분 증가"}
             >
-              {control.label}
+              <control.icon size={17} aria-hidden />
             </Button>
           ))}
         </div>
