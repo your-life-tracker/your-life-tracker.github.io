@@ -31,7 +31,7 @@ export function ActionItem({
   const periodLabel = action.period === "weekly" ? "주" : "개월";
 
   return (
-    <article className="grid gap-3 border-b border-stone-200 py-4 last:border-b-0">
+    <article className="grid gap-3 py-4 max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"

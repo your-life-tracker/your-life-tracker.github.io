@@ -230,7 +230,7 @@ function PeriodSection({
         <p className="mt-1 text-sm text-stone-500">{subtitle}</p>
       </div>
       {actions.length > 0 ? (
-        <div className="rounded-lg border border-stone-200 bg-white px-4 shadow-sm">
+        <div className="rounded-lg border border-stone-200 bg-white px-4 shadow-sm min-[720px]:grid min-[720px]:grid-cols-2 min-[720px]:gap-3 min-[720px]:border-0 min-[720px]:bg-transparent min-[720px]:px-0 min-[720px]:shadow-none">
           {actions.map(renderAction)}
         </div>
       ) : (
