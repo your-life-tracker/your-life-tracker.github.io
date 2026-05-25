@@ -6,6 +6,7 @@ import { ActionHistoryDialog } from "./ActionHistoryDialog";
 import { ActionItem } from "./ActionItem";
 import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
+import { SignOutConfirmDialog } from "./SignOutConfirmDialog";
 import {
   useActionHistoryQuery,
   useCurrentDailyEntriesQuery,
@@ -88,6 +89,22 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
     ));
   }
 
+  function openSignOutConfirmDialog() {
+    overlay.open(({ isOpen, close, unmount }) => (
+      <SignOutConfirmDialog
+        open={isOpen}
+        onClose={close}
+        onExit={unmount}
+        onConfirm={async () => {
+          if (!user.isGuest) {
+            await supabase.auth.signOut();
+          }
+          onSignOut();
+        }}
+      />
+    ));
+  }
+
   function getCurrentAmount(action: Action) {
     const period = action.period === "weekly" ? weeklyPeriod : monthlyPeriod;
     return (
@@ -147,13 +164,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
             variant="ghost"
             size="icon"
             aria-label="로그아웃"
-            onClick={() => {
-              if (user.isGuest) {
-                onSignOut();
-                return;
-              }
-              void supabase.auth.signOut().then(onSignOut);
-            }}
+            onClick={openSignOutConfirmDialog}
           >
             <LogOut size={19} aria-hidden />
           </Button>
