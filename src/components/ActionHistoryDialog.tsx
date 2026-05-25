@@ -8,6 +8,7 @@ import {
   format,
   isSameMonth,
   isAfter,
+  isToday,
   startOfMonth,
   startOfWeek,
   subMonths,
@@ -156,6 +157,7 @@ export function ActionHistoryDialog({
               const dayKey = toDateKey(day);
               const amount = amountByDate.get(dayKey) ?? 0;
               const isInMonth = isSameMonth(day, monthDate);
+              const isTodayDate = isToday(day);
 
               return (
                 <div
@@ -164,9 +166,11 @@ export function ActionHistoryDialog({
                 >
                   <span
                     className={
-                      isInMonth
-                        ? "text-xs font-medium text-stone-700"
-                        : "text-xs font-medium text-stone-300"
+                      isTodayDate
+                        ? "w-fit border-b-2 border-red-500 pb-0.5 text-xs font-semibold leading-none text-stone-950"
+                        : isInMonth
+                          ? "text-xs font-medium text-stone-700"
+                          : "text-xs font-medium text-stone-300"
                     }
                   >
                     {format(day, "d")}
