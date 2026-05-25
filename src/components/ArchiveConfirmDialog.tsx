@@ -62,10 +62,9 @@ export function ArchiveConfirmDialog({
                 “{actionName}”{particle} 아카이브할까요?
               </Dialog.Title>
               <Dialog.Description className="mt-2 text-sm leading-6 text-stone-600">
-                아카이브하면 홈 화면에서 보이지 않습니다. 기존 기록은 삭제되지
-                않습니다.
+                아카이브하면 홈 화면에서 보이지 않게 됩니다.
                 <br />
-                현재 버전에서는 앱 안에서 다시 복구할 수 없습니다.
+                *현재 버전에선 복구가 불가합니다.
               </Dialog.Description>
             </div>
           </div>
