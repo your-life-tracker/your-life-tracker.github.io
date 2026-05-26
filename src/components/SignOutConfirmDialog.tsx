@@ -55,10 +55,10 @@ export function SignOutConfirmDialog({
             </div>
             <div className="min-w-0">
               <Dialog.Title className="text-[19px] font-bold leading-snug text-stone-950">
-                로그아웃할까요?
+                로그아웃 할까요?
               </Dialog.Title>
               <Dialog.Description className="mt-2 text-[15px] leading-6 text-stone-600">
-                현재 화면에서 나가고 로그인 화면으로 돌아갑니다.
+                로그인 화면으로 돌아갑니다.
               </Dialog.Description>
             </div>
           </div>
