@@ -20,7 +20,7 @@ export function Button({
   return (
     <Comp
       className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-2 rounded-md font-semibold leading-none transition duration-[160ms] ease-out active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 sm:duration-[120ms] sm:active:scale-[0.99]",
+        "inline-flex shrink-0 items-center justify-center gap-2 rounded-md font-semibold leading-none transition duration-[160ms] ease-out active:scale-[0.97] disabled:pointer-events-none sm:duration-[120ms] sm:active:scale-[0.99]",
         "focus-visible:outline-none focus-visible:ring-0",
         variant === "primary" &&
           "bg-stone-950 text-white hover:bg-stone-800",

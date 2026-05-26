@@ -132,7 +132,9 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         action={action}
         amount={amount}
         todayAmount={todayAmount}
-        isAdjusting={adjustEntry.isPending}
+        isAdjusting={
+          adjustEntry.isPending && adjustEntry.variables?.action.id === action.id
+        }
         isArchiving={archiveAction.isPending}
         onOpenHistory={() => openActionHistoryDialog(action)}
         onArchive={() => openArchiveConfirmDialog(action)}
