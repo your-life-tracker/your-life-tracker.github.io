@@ -79,13 +79,13 @@ export function ActionDialog({
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-stone-950/35 data-[state=closed]:animate-out data-[state=open]:animate-in" />
-        <Dialog.Content className="fixed inset-x-4 top-4 z-50 max-h-[calc(100svh-32px)] overflow-y-auto rounded-lg border border-stone-200 bg-white p-5 shadow-xl outline-none sm:inset-x-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-32px)] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2">
+        <Dialog.Content className="fixed inset-x-4 top-4 z-50 max-h-[calc(100svh-32px)] overflow-y-auto rounded-lg border border-stone-200 bg-white p-6 shadow-xl shadow-stone-950/10 outline-none sm:inset-x-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-32px)] sm:max-w-md sm:-translate-x-1/2 sm:-translate-y-1/2">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <Dialog.Title className="text-lg font-semibold text-stone-950">
+              <Dialog.Title className="text-[20px] font-bold leading-tight text-stone-950">
                 액션 생성
               </Dialog.Title>
-              <Dialog.Description className="mt-1 text-sm text-stone-500">
+              <Dialog.Description className="mt-1.5 text-[15px] leading-6 text-stone-500">
                 실천 전략을 세워보세요.
               </Dialog.Description>
             </div>
@@ -96,8 +96,8 @@ export function ActionDialog({
             </Dialog.Close>
           </div>
 
-          <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
-            <label className="block text-sm font-medium text-stone-700">
+          <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
+            <label className="block text-[14px] font-semibold text-stone-700">
               이름
               <Input
                 className="mt-2"
@@ -108,7 +108,9 @@ export function ActionDialog({
             </label>
 
             <div>
-              <span className="text-sm font-medium text-stone-700">주기</span>
+              <span className="text-[14px] font-semibold text-stone-700">
+                주기
+              </span>
               <div className="mt-2">
                 <SegmentedControl
                   value={period}
@@ -122,7 +124,9 @@ export function ActionDialog({
             </div>
 
             <div>
-              <span className="text-sm font-medium text-stone-700">단위</span>
+              <span className="text-[14px] font-semibold text-stone-700">
+                단위
+              </span>
               <div className="mt-2">
                 <SegmentedControl
                   value={unit}
@@ -139,7 +143,7 @@ export function ActionDialog({
             </div>
 
             <div>
-              <span className="text-sm font-medium text-stone-700">
+              <span className="text-[14px] font-semibold text-stone-700">
                 목표량 {unit === "minutes" ? "(시간)" : "(횟수)"}
               </span>
               <div className="mt-2 grid grid-cols-[44px_minmax(0,1fr)_44px] items-center overflow-hidden rounded-md border border-stone-200 bg-white">
@@ -156,7 +160,7 @@ export function ActionDialog({
                 >
                   <Minus size={18} aria-hidden />
                 </button>
-                <div className="flex h-11 min-w-0 items-center justify-center border-x border-stone-200 px-3 text-sm font-semibold text-stone-950">
+                <div className="flex h-11 min-w-0 items-center justify-center border-x border-stone-200 px-3 text-[14px] font-bold text-stone-950">
                   {targetLabel}
                 </div>
                 <button
@@ -170,9 +174,9 @@ export function ActionDialog({
               </div>
             </div>
 
-            {error ? <p className="text-sm text-red-600">{error}</p> : null}
+            {error ? <p className="text-sm leading-6 text-red-600">{error}</p> : null}
 
-            <div className="flex justify-end gap-2 pt-2">
+            <div className="flex justify-end gap-2 pt-1">
               <Dialog.Close asChild>
                 <Button type="button" variant="secondary">
                   취소

@@ -52,16 +52,16 @@ export function ArchiveConfirmDialog({
     <Dialog.Root open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-stone-950/35 data-[state=closed]:animate-out data-[state=open]:animate-in" />
-        <Dialog.Content className="fixed inset-x-4 top-4 z-50 max-h-[calc(100svh-32px)] overflow-y-auto rounded-lg border border-stone-200 bg-white p-5 shadow-xl outline-none sm:inset-x-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-32px)] sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2">
+        <Dialog.Content className="fixed inset-x-4 top-4 z-50 max-h-[calc(100svh-32px)] overflow-y-auto rounded-lg border border-stone-200 bg-white p-6 shadow-xl shadow-stone-950/10 outline-none sm:inset-x-auto sm:left-1/2 sm:top-1/2 sm:w-[calc(100%-32px)] sm:max-w-sm sm:-translate-x-1/2 sm:-translate-y-1/2">
           <div className="flex gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-red-100 text-red-700">
               <AlertTriangle size={21} aria-hidden />
             </div>
             <div className="min-w-0">
-              <Dialog.Title className="text-lg font-semibold text-stone-950">
+              <Dialog.Title className="text-[19px] font-bold leading-snug text-stone-950">
                 “{actionName}”{particle} 아카이브할까요?
               </Dialog.Title>
-              <Dialog.Description className="mt-2 text-sm leading-6 text-stone-600">
+              <Dialog.Description className="mt-2 text-[15px] leading-6 text-stone-600">
                 홈 화면에서 보이지 않게 됩니다.
                 <br />
                 *현재 버전에선 복구가 불가합니다.
@@ -69,7 +69,7 @@ export function ArchiveConfirmDialog({
             </div>
           </div>
 
-          {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
+          {error ? <p className="mt-4 text-sm leading-6 text-red-600">{error}</p> : null}
 
           <div className="mt-6 grid grid-cols-2 gap-2">
             <Dialog.Close asChild>

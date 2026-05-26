@@ -38,17 +38,19 @@ export function AuthScreen({ onGuestMode }: AuthScreenProps) {
   return (
     <main className="flex min-h-svh items-center justify-center bg-stone-50 p-5 text-stone-950">
       <form
-        className="w-full max-w-sm rounded-lg border border-stone-200 bg-white p-5 shadow-sm"
+        className="w-full max-w-sm rounded-lg border border-stone-200 bg-white p-6 shadow-sm shadow-stone-950/[0.03]"
         onSubmit={handleSubmit}
       >
         <div className="flex h-11 w-11 items-center justify-center rounded-md bg-emerald-100 text-emerald-700">
           <Mail size={22} aria-hidden />
         </div>
-        <h1 className="mt-5 text-2xl font-semibold">Life Tracker</h1>
-        <p className="mt-2 text-sm leading-6 text-stone-600">
+        <h1 className="mt-5 text-[26px] font-bold leading-tight">
+          Life Tracker
+        </h1>
+        <p className="mt-2 text-[15px] leading-6 text-stone-600">
           이메일로 로그인 링크를 받아 시작하세요.
         </p>
-        <label className="mt-6 block text-sm font-medium text-stone-700">
+        <label className="mt-7 block text-[14px] font-semibold text-stone-700">
           이메일
           <Input
             className="mt-2"
@@ -61,16 +63,16 @@ export function AuthScreen({ onGuestMode }: AuthScreenProps) {
             required
           />
         </label>
-        {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm leading-6 text-red-600">{error}</p> : null}
         {status === "sent" ? (
-          <p className="mt-3 text-sm text-emerald-700">
+          <p className="mt-3 text-sm leading-6 text-emerald-700">
             로그인 링크를 보냈습니다. 메일함을 확인하세요.
           </p>
         ) : null}
-        <Button className="mt-6 w-full" type="submit" disabled={isSubmitting}>
+        <Button className="mt-7 w-full" type="submit" disabled={isSubmitting}>
           {isSubmitting ? "보내는 중..." : "로그인 링크 받기"}
         </Button>
-        <div className="my-5 flex items-center gap-3">
+        <div className="my-[22px] flex items-center gap-3">
           <div className="h-px flex-1 bg-stone-200" />
           <span className="text-xs font-medium text-stone-400">또는</span>
           <div className="h-px flex-1 bg-stone-200" />

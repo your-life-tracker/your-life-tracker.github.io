@@ -23,7 +23,7 @@ export function SegmentedControl<T extends string>({
           key={option.value}
           type="button"
           className={cn(
-            "h-9 rounded-[5px] text-sm font-medium text-stone-600 transition",
+            "h-9 rounded-[5px] text-[14px] font-semibold leading-none text-stone-600 transition",
             value === option.value && "bg-white text-stone-950 shadow-sm",
           )}
           onClick={() => onChange(option.value)}

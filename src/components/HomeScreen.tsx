@@ -151,18 +151,20 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   return (
     <main className="min-h-svh bg-stone-50 text-stone-950">
       <header className="sticky top-0 z-20 border-b border-stone-200 bg-stone-50/95 backdrop-blur">
-        <div className="mx-auto flex h-16 w-full max-w-2xl items-center justify-between px-4">
+        <div className="mx-auto flex h-15 w-full max-w-2xl items-center justify-between px-4">
           <div>
-            <h1 className="text-lg font-semibold">
+            <h1 className="text-[17px] font-bold leading-tight">
               <button
                 type="button"
-                className="rounded-md bg-transparent p-0 text-left text-inherit font-inherit leading-inherit text-inherit outline-none transition hover:text-stone-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
+                className="rounded-md bg-transparent p-0 text-left text-inherit font-inherit leading-inherit outline-none transition hover:text-stone-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
                 onClick={() => window.location.reload()}
               >
                 Life Tracker
               </button>
             </h1>
-            <p className="text-xs text-stone-500">{user.email}</p>
+            <p className="mt-0.5 text-[12px] leading-tight text-stone-500">
+              {user.email}
+            </p>
           </div>
           <Button
             type="button"
@@ -176,7 +178,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-5">
+      <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-6">
         {isInitialLoading ? (
           <p className="py-16 text-center text-sm text-stone-500">
             액션을 불러오는 중...
@@ -188,7 +190,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
             </p>
           </section>
         ) : (
-          <div className="space-y-8">
+          <div className="space-y-9">
             <PeriodSection
               title="주 단위"
               subtitle={formatWeeklyRange(weeklyPeriod)}
@@ -207,7 +209,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
 
       <Button
         type="button"
-        className="fixed bottom-5 right-5 z-30 h-14 w-14 rounded-full shadow-lg"
+        className="fixed bottom-5 right-5 z-30 h-14 w-14 rounded-full shadow-lg shadow-stone-950/15"
         aria-label="액션 생성"
         onClick={openActionDialog}
       >
@@ -230,16 +232,20 @@ function PeriodSection({
 }) {
   return (
     <section>
-      <div className="mb-2">
-        <h2 className="text-sm font-semibold text-stone-950">{title}</h2>
-        <p className="mt-1 text-sm text-stone-500">{subtitle}</p>
+      <div className="mb-3">
+        <h2 className="text-[15px] font-bold leading-snug text-stone-950">
+          {title}
+        </h2>
+        <p className="mt-0.5 text-[13px] leading-5 text-stone-500">
+          {subtitle}
+        </p>
       </div>
       {actions.length > 0 ? (
-        <div className="rounded-lg border border-stone-200 bg-white px-4 shadow-sm min-[720px]:grid min-[720px]:grid-cols-2 min-[720px]:gap-3 min-[720px]:border-0 min-[720px]:bg-transparent min-[720px]:px-0 min-[720px]:shadow-none">
+        <div className="rounded-lg border border-stone-200 bg-white px-4 shadow-sm shadow-stone-950/[0.03] min-[720px]:grid min-[720px]:grid-cols-2 min-[720px]:gap-3 min-[720px]:border-0 min-[720px]:bg-transparent min-[720px]:px-0 min-[720px]:shadow-none">
           {actions.map(renderAction)}
         </div>
       ) : (
-        <div className="rounded-lg border border-dashed border-stone-200 bg-white px-4 py-8 text-center text-sm text-stone-400">
+        <div className="rounded-lg border border-dashed border-stone-200 bg-white px-4 py-9 text-center text-sm leading-6 text-stone-400">
           해당 주기의 액션이 없습니다.
         </div>
       )}

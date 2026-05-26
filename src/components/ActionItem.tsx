@@ -34,7 +34,7 @@ export function ActionItem({
   const totalProgress = Math.min(100, (amount / action.target_amount) * 100);
 
   return (
-    <article className="grid gap-3 py-4 max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm">
+    <article className="grid gap-3.5 py-[18px] max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm min-[720px]:shadow-stone-950/[0.03]">
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"
@@ -43,7 +43,7 @@ export function ActionItem({
         >
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="min-w-0 text-base font-semibold">
+              <h3 className="min-w-0 text-[17px] font-bold leading-snug">
                 <span
                   className={cn(
                     "relative inline-block max-w-full truncate align-bottom transition-colors duration-[180ms]",
@@ -65,7 +65,7 @@ export function ActionItem({
                 </span>
               </h3>
             </div>
-            <p className="mt-1 text-sm text-stone-500">
+            <p className="mt-1.5 text-[15px] leading-5 text-stone-500">
               {formatCurrentAmount(amount, action.unit)} /{" "}
               {formatAmount(action.target_amount, action.unit)}
             </p>
@@ -108,7 +108,7 @@ export function ActionItem({
           <Button
             type="button"
             variant="secondary"
-            className="h-9"
+            className="h-10"
             disabled={isAdjusting || amount <= 0 || todayAmount <= 0}
             onClick={() => onAdjust(-1)}
           >
@@ -117,7 +117,7 @@ export function ActionItem({
           <Button
             type="button"
             variant="secondary"
-            className="h-9"
+            className="h-10"
             disabled={isAdjusting}
             onClick={() => onAdjust(1)}
           >
@@ -140,7 +140,7 @@ export function ActionItem({
                 todayAmount + control.delta < 0
               }
               onClick={() => onAdjust(control.delta)}
-              className="h-9 px-2"
+              className="h-10 px-2"
               aria-label={control.delta < 0 ? "30분 감소" : "30분 증가"}
             >
               <control.icon size={16} aria-hidden />
