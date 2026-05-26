@@ -1,4 +1,4 @@
-import { Archive, Check, Minus, Plus } from "lucide-react";
+import { Archive, Minus, Plus } from "lucide-react";
 import { Button } from "./ui/Button";
 import { formatAmount } from "../lib/periods";
 import { cn } from "../lib/utils";
@@ -45,7 +45,7 @@ export function ActionItem({
             <div className="flex items-center gap-2">
               <h3
                 className={cn(
-                  "truncate text-base font-semibold",
+                  "min-w-0 truncate text-base font-semibold",
                   isComplete
                     ? "text-stone-400 line-through decoration-stone-300"
                     : "text-stone-950",
@@ -53,11 +53,6 @@ export function ActionItem({
               >
                 {action.name}
               </h3>
-              {isComplete ? (
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                  <Check size={15} aria-label="목표 달성" />
-                </span>
-              ) : null}
             </div>
             <p className="mt-1 text-sm text-stone-500">
               {formatAmount(amount, action.unit)} /{" "}
