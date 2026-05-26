@@ -55,7 +55,7 @@ export function ActionItem({
               </h3>
             </div>
             <p className="mt-1 text-sm text-stone-500">
-              {formatAmount(amount, action.unit)} /{" "}
+              {formatCurrentAmount(amount, action.unit)} /{" "}
               {formatAmount(action.target_amount, action.unit)}
             </p>
           </div>
@@ -139,4 +139,13 @@ export function ActionItem({
       )}
     </article>
   );
+}
+
+function formatCurrentAmount(amount: number, unit: Action["unit"]) {
+  if (unit === "count") {
+    return String(amount);
+  }
+
+  const hours = amount / 60;
+  return Number.isInteger(hours) ? String(hours) : hours.toFixed(1);
 }
