@@ -34,6 +34,7 @@ export function ActionItem({
   const totalProgress = Math.min(100, (amount / action.target_amount) * 100);
   const shouldShowTodayDivider =
     previousAmount > 0 && todayAmount > 0 && totalProgress > previousProgress;
+  const isCountDecrementUnavailable = amount <= 0 || todayAmount <= 0;
 
   return (
     <article className="flex h-full flex-col gap-3.5 py-[18px] max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm min-[720px]:shadow-stone-950/[0.03]">
@@ -115,8 +116,13 @@ export function ActionItem({
           <Button
             type="button"
             variant="secondary"
-            className="h-10"
-            disabled={isAdjusting || amount <= 0 || todayAmount <= 0}
+            className={cn(
+              "h-10",
+              isAdjusting &&
+                !isCountDecrementUnavailable &&
+                "disabled:opacity-100",
+            )}
+            disabled={isAdjusting || isCountDecrementUnavailable}
             onClick={() => onAdjust(-1)}
           >
             <Minus size={16} aria-hidden />
@@ -124,7 +130,7 @@ export function ActionItem({
           <Button
             type="button"
             variant="secondary"
-            className="h-10"
+            className={cn("h-10", isAdjusting && "disabled:opacity-100")}
             disabled={isAdjusting}
             onClick={() => onAdjust(1)}
           >
@@ -136,23 +142,29 @@ export function ActionItem({
           {[
             { label: "-", delta: -30, icon: Minus },
             { label: "+", delta: 30, icon: Plus },
-          ].map((control) => (
-            <Button
-              key={control.label}
-              type="button"
-              variant="secondary"
-              disabled={
-                isAdjusting ||
-                amount + control.delta < 0 ||
-                todayAmount + control.delta < 0
-              }
-              onClick={() => onAdjust(control.delta)}
-              className="h-10 px-2"
-              aria-label={control.delta < 0 ? "30분 감소" : "30분 증가"}
-            >
-              <control.icon size={16} aria-hidden />
-            </Button>
-          ))}
+          ].map((control) => {
+            const isControlUnavailable =
+              amount + control.delta < 0 || todayAmount + control.delta < 0;
+
+            return (
+              <Button
+                key={control.label}
+                type="button"
+                variant="secondary"
+                disabled={isAdjusting || isControlUnavailable}
+                onClick={() => onAdjust(control.delta)}
+                className={cn(
+                  "h-10 px-2",
+                  isAdjusting &&
+                    !isControlUnavailable &&
+                    "disabled:opacity-100",
+                )}
+                aria-label={control.delta < 0 ? "30분 감소" : "30분 증가"}
+              >
+                <control.icon size={16} aria-hidden />
+              </Button>
+            );
+          })}
         </div>
       )}
     </article>
