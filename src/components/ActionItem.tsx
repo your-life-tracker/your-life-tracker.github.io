@@ -32,7 +32,7 @@ export function ActionItem({
     (previousAmount / action.target_amount) * 100,
   );
   const totalProgress = Math.min(100, (amount / action.target_amount) * 100);
-  const shouldBlendProgress =
+  const shouldShowTodayDivider =
     previousAmount > 0 && todayAmount > 0 && totalProgress > previousProgress;
 
   return (
@@ -95,23 +95,19 @@ export function ActionItem({
         aria-label={`진행률 ${formatAmount(amount, action.unit)} 중 오늘 ${formatAmount(Math.min(todayAmount, amount), action.unit)}`}
       >
         <div
-          className="absolute inset-y-0 left-0 w-full origin-left bg-violet-300 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
+          className="absolute inset-y-0 left-0 w-full origin-left bg-violet-400 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
           style={{
             transform: `scaleX(${totalProgress / 100})`,
             willChange: "transform",
           }}
         />
-        <div
-          className={cn(
-            "absolute inset-y-0 left-0 w-full origin-left bg-indigo-500 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out",
-            shouldBlendProgress &&
-              "bg-gradient-to-r from-indigo-500 from-[72%] to-transparent",
-          )}
-          style={{
-            transform: `scaleX(${previousProgress / 100})`,
-            willChange: "transform",
-          }}
-        />
+        {shouldShowTodayDivider ? (
+          <div
+            className="absolute inset-y-0 w-px -translate-x-1/2 bg-white/75 shadow-[0_0_4px_rgb(255_255_255_/_0.45)]"
+            style={{ left: `${previousProgress}%` }}
+            aria-hidden
+          />
+        ) : null}
       </div>
 
       {action.unit === "count" ? (
