@@ -21,7 +21,7 @@ export function Button({
     <Comp
       className={cn(
         "inline-flex shrink-0 items-center justify-center gap-2 rounded-md font-medium transition disabled:pointer-events-none disabled:opacity-45",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950",
+        "focus-visible:outline-none focus-visible:ring-0",
         variant === "primary" &&
           "bg-stone-950 text-white hover:bg-stone-800",
         variant === "secondary" &&
