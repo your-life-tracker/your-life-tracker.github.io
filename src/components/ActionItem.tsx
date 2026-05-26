@@ -43,15 +43,26 @@ export function ActionItem({
         >
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3
-                className={cn(
-                  "min-w-0 truncate text-base font-semibold",
-                  isComplete
-                    ? "text-stone-400 line-through decoration-stone-300"
-                    : "text-stone-950",
-                )}
-              >
-                {action.name}
+              <h3 className="min-w-0 text-base font-semibold">
+                <span
+                  className={cn(
+                    "relative inline-block max-w-full truncate align-bottom transition-colors duration-[180ms]",
+                    isComplete
+                      ? "text-stone-400 delay-[220ms]"
+                      : "text-stone-950 delay-0",
+                  )}
+                >
+                  {action.name}
+                  <span
+                    className={cn(
+                      "pointer-events-none absolute inset-x-0 top-1/2 h-0.5 origin-left -translate-y-1/2 bg-stone-400/90 transition-transform duration-[320ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+                      isComplete
+                        ? "scale-x-100 delay-0"
+                        : "scale-x-0 delay-[140ms]",
+                    )}
+                    aria-hidden
+                  />
+                </span>
               </h3>
             </div>
             <p className="mt-1 text-sm text-stone-500">
