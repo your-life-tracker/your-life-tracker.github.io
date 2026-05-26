@@ -32,6 +32,8 @@ export function ActionItem({
     (previousAmount / action.target_amount) * 100,
   );
   const totalProgress = Math.min(100, (amount / action.target_amount) * 100);
+  const shouldBlendProgress =
+    previousAmount > 0 && todayAmount > 0 && totalProgress > previousProgress;
 
   return (
     <article className="flex h-full flex-col gap-3.5 py-[18px] max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm min-[720px]:shadow-stone-950/[0.03]">
@@ -100,7 +102,11 @@ export function ActionItem({
           }}
         />
         <div
-          className="absolute inset-y-0 left-0 w-full origin-left bg-indigo-500 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
+          className={cn(
+            "absolute inset-y-0 left-0 w-full origin-left bg-indigo-500 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out",
+            shouldBlendProgress &&
+              "bg-gradient-to-r from-indigo-500 from-[72%] to-transparent",
+          )}
           style={{
             transform: `scaleX(${previousProgress / 100})`,
             willChange: "transform",
