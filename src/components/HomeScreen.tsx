@@ -150,7 +150,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
 
   return (
     <main className="min-h-svh bg-stone-50 text-stone-950">
-      <header className="sticky top-0 z-20 border-b border-stone-200 bg-stone-50/95 backdrop-blur">
+      <header className="border-b border-stone-200 bg-stone-50/95 backdrop-blur">
         <div className="mx-auto flex h-15 w-full max-w-2xl items-center justify-between px-4">
           <div>
             <h1 className="text-[17px] font-bold leading-tight">
