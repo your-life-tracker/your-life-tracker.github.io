@@ -34,14 +34,14 @@ export function ActionItem({
   const totalProgress = Math.min(100, (amount / action.target_amount) * 100);
 
   return (
-    <article className="grid gap-3.5 py-[18px] max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm min-[720px]:shadow-stone-950/[0.03]">
+    <article className="flex h-full flex-col gap-3.5 py-[18px] max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm min-[720px]:shadow-stone-950/[0.03]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h3 className="min-w-0 text-[17px] font-bold leading-snug">
               <span
                 className={cn(
-                  "relative inline-block max-w-full truncate align-bottom transition-colors duration-[180ms]",
+                  "relative inline-block max-w-full whitespace-normal break-words align-bottom transition-colors duration-[180ms] [overflow-wrap:anywhere]",
                   isComplete
                     ? "text-stone-400 delay-[220ms]"
                     : "text-stone-950 delay-0",
@@ -89,7 +89,7 @@ export function ActionItem({
       </div>
 
       <div
-        className="relative h-2 overflow-hidden rounded-full bg-stone-100"
+        className="relative mt-auto h-2 overflow-hidden rounded-full bg-stone-100"
         aria-label={`진행률 ${formatAmount(amount, action.unit)} 중 오늘 ${formatAmount(Math.min(todayAmount, amount), action.unit)}`}
       >
         <div
