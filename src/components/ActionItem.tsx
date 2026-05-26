@@ -88,14 +88,14 @@ export function ActionItem({
         aria-label={`진행률 ${formatAmount(amount, action.unit)} 중 오늘 ${formatAmount(Math.min(todayAmount, amount), action.unit)}`}
       >
         <div
-          className="absolute inset-y-0 left-0 w-full origin-left bg-emerald-300 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
+          className="absolute inset-y-0 left-0 w-full origin-left bg-violet-300 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
           style={{
             transform: `scaleX(${totalProgress / 100})`,
             willChange: "transform",
           }}
         />
         <div
-          className="absolute inset-y-0 left-0 w-full origin-left bg-emerald-600 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
+          className="absolute inset-y-0 left-0 w-full origin-left bg-indigo-500 motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out"
           style={{
             transform: `scaleX(${previousProgress / 100})`,
             willChange: "transform",
