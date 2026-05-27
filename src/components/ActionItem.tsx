@@ -37,7 +37,7 @@ export function ActionItem({
   const isCountDecrementUnavailable = amount <= 0 || todayAmount <= 0;
 
   return (
-    <article className="flex h-full flex-col gap-3.5 py-[18px] max-[719px]:border-b max-[719px]:border-stone-200 max-[719px]:last:border-b-0 min-[720px]:rounded-lg min-[720px]:border min-[720px]:border-stone-200 min-[720px]:bg-white min-[720px]:p-4 min-[720px]:shadow-sm min-[720px]:shadow-stone-950/[0.03]">
+    <article className="flex h-full flex-col gap-3.5 rounded-lg border border-stone-200 bg-white p-4 shadow-sm shadow-stone-950/[0.03]">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">

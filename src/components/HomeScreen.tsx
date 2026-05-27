@@ -253,7 +253,7 @@ function PeriodSection({
         </p>
       </div>
       {actions.length > 0 ? (
-        <div className="rounded-lg border border-stone-200 bg-white px-4 shadow-sm shadow-stone-950/[0.03] min-[720px]:grid min-[720px]:auto-rows-fr min-[720px]:grid-cols-2 min-[720px]:gap-3 min-[720px]:border-0 min-[720px]:bg-transparent min-[720px]:px-0 min-[720px]:shadow-none">
+        <div className="grid gap-3 min-[720px]:auto-rows-fr min-[720px]:grid-cols-2">
           {actions.map(renderAction)}
         </div>
       ) : (
