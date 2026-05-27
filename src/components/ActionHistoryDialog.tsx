@@ -223,10 +223,10 @@ export function ActionHistoryDialog({
                   <span
                     className={
                       isTodayDate
-                        ? "w-fit border-b-2 border-red-500 pb-0.5 text-xs font-semibold leading-none text-stone-950"
+                        ? "relative inline-flex h-4 w-fit shrink-0 items-start self-start text-xs font-medium leading-none text-stone-950 after:absolute after:left-0 after:top-[14px] after:h-0.5 after:w-full after:bg-red-500"
                         : isInMonth
-                          ? "text-xs font-medium text-stone-700"
-                          : "text-xs font-medium text-stone-300"
+                          ? "inline-flex h-4 w-fit shrink-0 items-start self-start text-xs font-medium leading-none text-stone-700"
+                          : "inline-flex h-4 w-fit shrink-0 items-start self-start text-xs font-medium leading-none text-stone-300"
                     }
                   >
                     {format(day, "d")}
