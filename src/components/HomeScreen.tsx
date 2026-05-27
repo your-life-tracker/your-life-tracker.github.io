@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { overlay } from "overlay-kit";
 import { LogOut, Plus } from "lucide-react";
 import {
@@ -272,6 +273,11 @@ function PeriodSection({
   ) => ReactNode;
   onReorder: (actions: Action[]) => void;
 }) {
+  const [localActions, setLocalActions] = useState(actions);
+  useEffect(() => {
+    setLocalActions(actions);
+  }, [actions]);
+
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: { delay: 0, tolerance: 5 },
@@ -280,23 +286,19 @@ function PeriodSection({
       activationConstraint: { delay: 0, tolerance: 5 },
     }),
   );
-  const actionIds = actions.map((action) => action.id);
+  const localActionIds = localActions.map((action) => action.id);
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+  function handleDragEnd({ active, over }: DragEndEvent) {
+    if (!over || active.id === over.id) return;
 
-    if (!over || active.id === over.id) {
-      return;
-    }
+    const ids = localActions.map((a) => a.id);
+    const oldIndex = ids.indexOf(String(active.id));
+    const newIndex = ids.indexOf(String(over.id));
+    if (oldIndex < 0 || newIndex < 0) return;
 
-    const oldIndex = actionIds.indexOf(String(active.id));
-    const newIndex = actionIds.indexOf(String(over.id));
-
-    if (oldIndex < 0 || newIndex < 0) {
-      return;
-    }
-
-    onReorder(arrayMove(actions, oldIndex, newIndex));
+    const newActions = arrayMove(localActions, oldIndex, newIndex);
+    setLocalActions(newActions);
+    onReorder(newActions);
   }
 
   return (
@@ -316,9 +318,9 @@ function PeriodSection({
           modifiers={[restrictToParentElement]}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext items={actionIds} strategy={rectSortingStrategy}>
+          <SortableContext items={localActionIds} strategy={rectSortingStrategy}>
             <div className="grid gap-3 min-[720px]:auto-rows-fr min-[720px]:grid-cols-2">
-              {actions.map((action) => (
+              {localActions.map((action) => (
                 <SortableActionItem
                   key={action.id}
                   action={action}
