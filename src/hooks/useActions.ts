@@ -21,6 +21,7 @@ import {
   fetchActions,
   fetchCurrentDailyEntries,
   fetchCurrentEntries,
+  reorderActions,
   type AdjustEntryInput,
   type CreateActionInput,
 } from "../api/actions";
@@ -34,6 +35,7 @@ import {
   fetchGuestActions,
   fetchGuestCurrentDailyEntries,
   fetchGuestCurrentEntries,
+  reorderGuestActions,
 } from "../lib/guestStorage";
 import { getCurrentPeriod, toDateKey } from "../lib/periods";
 import type { Action, ActionDailyEntry, ActionEntry } from "../lib/types";
@@ -191,6 +193,58 @@ export function useArchiveActionMutation(userId: string, isGuest = false) {
       return { previous, key };
     },
     onError: (_error, _actionId, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(context.key, context.previous);
+      }
+    },
+    onSettled: () => {
+      void queryClient.invalidateQueries({
+        queryKey: actionKeys.actions(userId),
+      });
+    },
+  });
+}
+
+export function useReorderActionsMutation(userId: string, isGuest = false) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (actions: Action[]) => {
+      const input = actions.map((action, index) => ({
+        id: action.id,
+        sortOrder: index * 1000,
+      }));
+
+      return isGuest
+        ? reorderGuestActions(userId, input)
+        : await reorderActions({ userId, actions: input });
+    },
+    onMutate: async (actions) => {
+      const key = actionKeys.actions(userId);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<Action[]>(key);
+      const sortOrderById = new Map(
+        actions.map((action, index) => [action.id, index * 1000]),
+      );
+
+      queryClient.setQueryData<Action[]>(key, (current = []) =>
+        current
+          .map((action) => {
+            const sortOrder = sortOrderById.get(action.id);
+            return sortOrder === undefined
+              ? action
+              : { ...action, sort_order: sortOrder };
+          })
+          .sort(
+            (a, b) =>
+              a.sort_order - b.sort_order ||
+              a.created_at.localeCompare(b.created_at),
+          ),
+      );
+
+      return { previous, key };
+    },
+    onError: (_error, _actions, context) => {
       if (context?.previous) {
         queryClient.setQueryData(context.key, context.previous);
       }

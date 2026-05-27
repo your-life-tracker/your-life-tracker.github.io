@@ -8,6 +8,7 @@ export type Action = {
   period: ActionPeriod;
   unit: ActionUnit;
   target_amount: number;
+  sort_order: number;
   created_at: string;
   archived_at: string | null;
 };
@@ -43,6 +44,7 @@ export type Database = {
           period: ActionPeriod;
           unit: ActionUnit;
           target_amount: number;
+          sort_order?: number;
           created_at?: string;
           archived_at?: string | null;
         };

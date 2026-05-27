@@ -23,6 +23,7 @@ export async function fetchActions(userId: string) {
     .select("*")
     .eq("user_id", userId)
     .is("archived_at", null)
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) throw error;
@@ -112,6 +113,18 @@ export async function fetchActionHistory(userId: string, actionIds: string[]) {
 }
 
 export async function createAction(input: CreateActionInput) {
+  const { data: latestAction, error: latestActionError } = await supabase
+    .from("actions")
+    .select("sort_order")
+    .eq("user_id", input.userId)
+    .eq("period", input.period)
+    .is("archived_at", null)
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (latestActionError) throw latestActionError;
+
   const { data, error } = await supabase
     .from("actions")
     .insert({
@@ -120,12 +133,37 @@ export async function createAction(input: CreateActionInput) {
       period: input.period,
       unit: input.unit,
       target_amount: input.targetAmount,
+      sort_order: (latestAction?.sort_order ?? -1000) + 1000,
     })
     .select("*")
     .single();
 
   if (error) throw error;
   return data satisfies Action;
+}
+
+export type ReorderActionsInput = {
+  userId: string;
+  actions: Array<{
+    id: string;
+    sortOrder: number;
+  }>;
+};
+
+export async function reorderActions(input: ReorderActionsInput) {
+  await Promise.all(
+    input.actions.map(async (action) => {
+      const { error } = await supabase
+        .from("actions")
+        .update({ sort_order: action.sortOrder })
+        .eq("id", action.id)
+        .eq("user_id", input.userId);
+
+      if (error) throw error;
+    }),
+  );
+
+  return input.actions;
 }
 
 export async function archiveAction(actionId: string) {

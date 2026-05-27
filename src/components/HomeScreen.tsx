@@ -1,9 +1,25 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { overlay } from "overlay-kit";
 import { LogOut, Plus } from "lucide-react";
+import {
+  closestCenter,
+  DndContext,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  rectSortingStrategy,
+  SortableContext,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ActionDialog } from "./ActionDialog";
 import { ActionHistoryDialog } from "./ActionHistoryDialog";
-import { ActionItem } from "./ActionItem";
+import { ActionItem, type ActionDragHandleProps } from "./ActionItem";
 import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
 import { LoadingIndicator } from "./LoadingIndicator";
@@ -15,6 +31,7 @@ import {
   useArchiveActionMutation,
   useCreateActionMutation,
   useCurrentEntriesQuery,
+  useReorderActionsMutation,
 } from "../hooks/useActions";
 import {
   formatMonthlyRange,
@@ -45,6 +62,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   const createAction = useCreateActionMutation(userId, user.isGuest);
   const archiveAction = useArchiveActionMutation(userId, user.isGuest);
   const adjustEntry = useAdjustEntryMutation(userId, user.isGuest);
+  const reorderActions = useReorderActionsMutation(userId, user.isGuest);
   const isInitialLoading =
     actionsQuery.isLoading ||
     currentEntriesQuery.isLoading ||
@@ -124,7 +142,10 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
     );
   }
 
-  function renderAction(action: Action) {
+  function renderAction(
+    action: Action,
+    dragHandleProps?: ActionDragHandleProps,
+  ) {
     const amount = getCurrentAmount(action);
     const todayAmount = getTodayAmount(action);
 
@@ -133,6 +154,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         key={action.id}
         action={action}
         amount={amount}
+        dragHandleProps={dragHandleProps}
         todayAmount={todayAmount}
         isAdjusting={
           adjustEntry.isPending && adjustEntry.variables?.action.id === action.id
@@ -208,12 +230,14 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
                   subtitle={formatWeeklyRange(weeklyPeriod)}
                   actions={weeklyActions}
                   renderAction={renderAction}
+                  onReorder={(nextActions) => reorderActions.mutate(nextActions)}
               />
               <PeriodSection
                   title="월 단위"
                   subtitle={formatMonthlyRange(monthlyPeriod)}
                   actions={monthlyActions}
                   renderAction={renderAction}
+                  onReorder={(nextActions) => reorderActions.mutate(nextActions)}
               />
             </div>
         )}
@@ -236,12 +260,44 @@ function PeriodSection({
   subtitle,
   actions,
   renderAction,
+  onReorder,
 }: {
   title: string;
   subtitle: string;
   actions: Action[];
-  renderAction: (action: Action) => ReactNode;
+  renderAction: (
+    action: Action,
+    dragHandleProps?: ActionDragHandleProps,
+  ) => ReactNode;
+  onReorder: (actions: Action[]) => void;
 }) {
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: { delay: 1000, tolerance: 5 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 1000, tolerance: 5 },
+    }),
+  );
+  const actionIds = actions.map((action) => action.id);
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    const oldIndex = actionIds.indexOf(String(active.id));
+    const newIndex = actionIds.indexOf(String(over.id));
+
+    if (oldIndex < 0 || newIndex < 0) {
+      return;
+    }
+
+    onReorder(arrayMove(actions, oldIndex, newIndex));
+  }
+
   return (
     <section>
       <div className="mb-3">
@@ -253,14 +309,66 @@ function PeriodSection({
         </p>
       </div>
       {actions.length > 0 ? (
-        <div className="grid gap-3 min-[720px]:auto-rows-fr min-[720px]:grid-cols-2">
-          {actions.map(renderAction)}
-        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={actionIds} strategy={rectSortingStrategy}>
+            <div className="grid gap-3 min-[720px]:auto-rows-fr min-[720px]:grid-cols-2">
+              {actions.map((action) => (
+                <SortableActionItem
+                  key={action.id}
+                  action={action}
+                  renderAction={renderAction}
+                />
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       ) : (
         <div className="rounded-lg border border-dashed border-stone-200 bg-white px-4 py-9 text-center text-sm leading-6 text-stone-400">
           해당 주기의 액션이 없습니다.
         </div>
       )}
     </section>
+  );
+}
+
+function SortableActionItem({
+  action,
+  renderAction,
+}: {
+  action: Action;
+  renderAction: (
+    action: Action,
+    dragHandleProps?: ActionDragHandleProps,
+  ) => ReactNode;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: action.id });
+  const style: CSSProperties = {
+    position: isDragging ? "relative" : undefined,
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 1 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} className="h-full" style={style}>
+      {renderAction(action, {
+        attributes,
+        listeners,
+        setActivatorNodeRef,
+        isDragging,
+      })}
+    </div>
   );
 }

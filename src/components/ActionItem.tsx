@@ -1,12 +1,24 @@
 import { Archive, CalendarDays, GripVertical, Minus, Plus } from "lucide-react";
+import type {
+  DraggableAttributes,
+  DraggableSyntheticListeners,
+} from "@dnd-kit/core";
 import { Button } from "./ui/Button";
 import { formatAmount } from "../lib/periods";
 import { cn } from "../lib/utils";
 import type { Action } from "../lib/types";
 
+export type ActionDragHandleProps = {
+  attributes?: DraggableAttributes;
+  listeners?: DraggableSyntheticListeners;
+  setActivatorNodeRef?: (element: HTMLDivElement | null) => void;
+  isDragging?: boolean;
+};
+
 type ActionItemProps = {
   action: Action;
   amount: number;
+  dragHandleProps?: ActionDragHandleProps;
   onAdjust: (delta: number) => void;
   onArchive: () => void;
   onOpenHistory: () => void;
@@ -18,6 +30,7 @@ type ActionItemProps = {
 export function ActionItem({
   action,
   amount,
+  dragHandleProps,
   onAdjust,
   onArchive,
   onOpenHistory,
@@ -39,8 +52,16 @@ export function ActionItem({
   return (
     <article className="grid h-full grid-cols-[18px_minmax(0,1fr)] gap-3 rounded-lg border border-stone-200 bg-white p-4 pl-2 shadow-sm shadow-stone-950/[0.03]">
       <div
-        className="flex min-h-10 items-center justify-center pt-1 text-stone-300"
-        aria-hidden
+        ref={dragHandleProps?.setActivatorNodeRef}
+        className={cn(
+          "flex min-h-10 touch-none select-none items-center justify-center pt-1 text-stone-300",
+          dragHandleProps ? "cursor-grab active:cursor-grabbing" : "cursor-default",
+          dragHandleProps?.isDragging && "text-stone-500",
+        )}
+        {...dragHandleProps?.attributes}
+        {...dragHandleProps?.listeners}
+        aria-hidden={dragHandleProps ? undefined : true}
+        aria-label={dragHandleProps ? `${action.name} 순서 변경` : undefined}
       >
         <GripVertical size={17} />
       </div>

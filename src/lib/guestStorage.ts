@@ -47,7 +47,16 @@ function readGuestData() {
   }
 
   try {
-    return { ...emptyGuestData(), ...JSON.parse(raw) } as GuestData;
+    const data = { ...emptyGuestData(), ...JSON.parse(raw) } as GuestData;
+
+    return {
+      ...data,
+      actions: data.actions.map((action, index) => ({
+        ...action,
+        sort_order:
+          typeof action.sort_order === "number" ? action.sort_order : index * 1000,
+      })),
+    };
   } catch {
     return emptyGuestData();
   }
@@ -69,7 +78,10 @@ export function fetchGuestActions(userId: string) {
     .actions.filter(
       (action) => action.user_id === userId && action.archived_at === null,
     )
-    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+    .sort(
+      (a, b) =>
+        a.sort_order - b.sort_order || a.created_at.localeCompare(b.created_at),
+    );
 }
 
 export function fetchGuestCurrentEntries(userId: string) {
@@ -139,6 +151,18 @@ export function fetchGuestFirstActionDailyEntry(userId: string, actionId: string
 
 export function createGuestAction(input: GuestCreateActionInput) {
   const data = readGuestData();
+  const sortOrder =
+    Math.max(
+      -1000,
+      ...data.actions
+        .filter(
+          (action) =>
+            action.user_id === input.userId &&
+            action.period === input.period &&
+            action.archived_at === null,
+        )
+        .map((action) => action.sort_order),
+    ) + 1000;
   const action: Action = {
     id: createId("action"),
     user_id: input.userId,
@@ -146,6 +170,7 @@ export function createGuestAction(input: GuestCreateActionInput) {
     period: input.period,
     unit: input.unit,
     target_amount: input.targetAmount,
+    sort_order: sortOrder,
     created_at: new Date().toISOString(),
     archived_at: null,
   };
@@ -169,6 +194,27 @@ export function archiveGuestAction(actionId: string) {
   writeGuestData({ ...data, actions });
 
   return { ...archivedAction, archived_at: archivedAt };
+}
+
+export function reorderGuestActions(
+  userId: string,
+  actions: Array<{ id: string; sortOrder: number }>,
+) {
+  const data = readGuestData();
+  const sortOrderById = new Map(
+    actions.map((action) => [action.id, action.sortOrder]),
+  );
+
+  const nextActions = data.actions.map((action) => {
+    const nextSortOrder = sortOrderById.get(action.id);
+
+    return action.user_id === userId && nextSortOrder !== undefined
+      ? { ...action, sort_order: nextSortOrder }
+      : action;
+  });
+
+  writeGuestData({ ...data, actions: nextActions });
+  return actions;
 }
 
 export function adjustGuestEntry(input: GuestAdjustEntryInput) {
