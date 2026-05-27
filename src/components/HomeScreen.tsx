@@ -219,7 +219,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
                 />
               </button>
             </h1>
-            <p className="mt-0.5 text-[12px] leading-tight text-stone-500">
+            <p className="mt-0.5 text-[12px] leading-tight text-stone-500 pointer-events-none select-none">
               {user.email}
             </p>
           </div>
