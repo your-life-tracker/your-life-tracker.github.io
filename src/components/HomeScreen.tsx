@@ -273,10 +273,10 @@ function PeriodSection({
 }) {
   const sensors = useSensors(
     useSensor(MouseSensor, {
-      activationConstraint: { delay: 1000, tolerance: 5 },
+      activationConstraint: { delay: 0, tolerance: 5 },
     }),
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 1000, tolerance: 5 },
+      activationConstraint: { delay: 0, tolerance: 5 },
     }),
   );
   const actionIds = actions.map((action) => action.id);
