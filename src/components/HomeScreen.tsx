@@ -21,6 +21,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { ActionDialog } from "./ActionDialog";
 import { ActionHistoryDialog } from "./ActionHistoryDialog";
+import { EditActionDialog } from "./EditActionDialog";
 import { ActionItem, type ActionDragHandleProps } from "./ActionItem";
 import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
@@ -34,6 +35,7 @@ import {
   useCreateActionMutation,
   useCurrentEntriesQuery,
   useReorderActionsMutation,
+  useUpdateActionMutation,
 } from "../hooks/useActions";
 import {
   formatMonthlyRange,
@@ -62,6 +64,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   const currentEntries = currentEntriesQuery.data ?? [];
   const currentDailyEntries = currentDailyEntriesQuery.data ?? [];
   const createAction = useCreateActionMutation(userId, user.isGuest);
+  const updateAction = useUpdateActionMutation(userId, user.isGuest);
   const archiveAction = useArchiveActionMutation(userId, user.isGuest);
   const adjustEntry = useAdjustEntryMutation(userId, user.isGuest);
   const reorderActions = useReorderActionsMutation(userId, user.isGuest);
@@ -82,6 +85,18 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
         onClose={close}
         onExit={unmount}
         onCreate={createAction.mutateAsync}
+      />
+    ));
+  }
+
+  function openEditActionDialog(action: Action) {
+    overlay.open(({ isOpen, close, unmount }) => (
+      <EditActionDialog
+        action={action}
+        open={isOpen}
+        onClose={close}
+        onExit={unmount}
+        onEdit={updateAction.mutateAsync}
       />
     ));
   }
@@ -162,6 +177,7 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
           adjustEntry.isPending && adjustEntry.variables?.action.id === action.id
         }
         isArchiving={archiveAction.isPending}
+        onEdit={() => openEditActionDialog(action)}
         onOpenHistory={() => openActionHistoryDialog(action)}
         onArchive={() => openArchiveConfirmDialog(action)}
         onAdjust={(delta) =>

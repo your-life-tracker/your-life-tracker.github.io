@@ -1,4 +1,4 @@
-import { Archive, CalendarDays, GripVertical, Minus, Plus } from "lucide-react";
+import { Archive, CalendarDays, GripVertical, Minus, Pencil, Plus } from "lucide-react";
 import type {
   DraggableAttributes,
   DraggableSyntheticListeners,
@@ -21,6 +21,7 @@ type ActionItemProps = {
   dragHandleProps?: ActionDragHandleProps;
   onAdjust: (delta: number) => void;
   onArchive: () => void;
+  onEdit: () => void;
   onOpenHistory: () => void;
   todayAmount: number;
   isAdjusting?: boolean;
@@ -33,6 +34,7 @@ export function ActionItem({
   dragHandleProps,
   onAdjust,
   onArchive,
+  onEdit,
   onOpenHistory,
   todayAmount,
   isAdjusting,
@@ -97,6 +99,15 @@ export function ActionItem({
             </p>
           </div>
           <div className="-mr-2 flex shrink-0 items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={`${action.name} 수정`}
+              onClick={onEdit}
+            >
+              <Pencil size={18} aria-hidden />
+            </Button>
             <Button
               type="button"
               variant="ghost"

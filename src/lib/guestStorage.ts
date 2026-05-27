@@ -179,6 +179,22 @@ export function createGuestAction(input: GuestCreateActionInput) {
   return action;
 }
 
+export function updateGuestAction(input: { id: string; name: string }) {
+  const data = readGuestData();
+  const action = data.actions.find((a) => a.id === input.id);
+
+  if (!action) {
+    throw new Error("액션을 찾을 수 없습니다.");
+  }
+
+  const actions = data.actions.map((a) =>
+    a.id === input.id ? { ...a, name: input.name } : a,
+  );
+  writeGuestData({ ...data, actions });
+
+  return { ...action, name: input.name };
+}
+
 export function archiveGuestAction(actionId: string) {
   const data = readGuestData();
   const archivedAt = new Date().toISOString();

@@ -166,6 +166,18 @@ export async function reorderActions(input: ReorderActionsInput) {
   return input.actions;
 }
 
+export async function updateAction(input: { id: string; name: string }) {
+  const { data, error } = await supabase
+    .from("actions")
+    .update({ name: input.name })
+    .eq("id", input.id)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data satisfies Action;
+}
+
 export async function archiveAction(actionId: string) {
   const { data, error } = await supabase
     .from("actions")

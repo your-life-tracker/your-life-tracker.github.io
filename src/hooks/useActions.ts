@@ -15,6 +15,7 @@ import {
   adjustEntry,
   archiveAction,
   createAction,
+  updateAction,
   fetchActionDailyEntries,
   fetchFirstActionDailyEntry,
   fetchActionHistory,
@@ -29,6 +30,7 @@ import {
   adjustGuestEntry,
   archiveGuestAction,
   createGuestAction,
+  updateGuestAction,
   fetchGuestActionDailyEntries,
   fetchGuestFirstActionDailyEntry,
   fetchGuestActionHistory,
@@ -168,6 +170,38 @@ export function useCreateActionMutation(userId: string, isGuest = false) {
         ? createGuestAction({ ...input, userId })
         : await createAction({ ...input, userId }),
     onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: actionKeys.actions(userId),
+      });
+    },
+  });
+}
+
+export function useUpdateActionMutation(userId: string, isGuest = false) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: { id: string; name: string }) =>
+      isGuest ? updateGuestAction(input) : await updateAction(input),
+    onMutate: async (input) => {
+      const key = actionKeys.actions(userId);
+      await queryClient.cancelQueries({ queryKey: key });
+      const previous = queryClient.getQueryData<Action[]>(key);
+
+      queryClient.setQueryData<Action[]>(key, (current = []) =>
+        current.map((action) =>
+          action.id === input.id ? { ...action, name: input.name } : action,
+        ),
+      );
+
+      return { previous, key };
+    },
+    onError: (_error, _input, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(context.key, context.previous);
+      }
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({
         queryKey: actionKeys.actions(userId),
       });
