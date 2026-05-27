@@ -182,7 +182,7 @@ export function ActionDialog({
                   취소
                 </Button>
               </Dialog.Close>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting || !name.trim()}>
                 {isSubmitting ? "생성 중..." : "생성"}
               </Button>
             </div>

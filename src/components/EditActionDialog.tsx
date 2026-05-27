@@ -168,7 +168,7 @@ export function EditActionDialog({
                   취소
                 </Button>
               </Dialog.Close>
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting || !name.trim() || name.trim() === action.name}>
                 {isSubmitting ? "저장 중..." : "저장"}
               </Button>
             </div>
