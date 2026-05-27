@@ -5,6 +5,7 @@ import { LogOut, Plus } from "lucide-react";
 import {
   closestCenter,
   DndContext,
+  AutoScrollActivator,
   MouseSensor,
   TouchSensor,
   useSensor,
@@ -333,6 +334,7 @@ function PeriodSection({
           collisionDetection={closestCenter}
           modifiers={[restrictToParentElement]}
           onDragEnd={handleDragEnd}
+          autoScroll={{ activator: AutoScrollActivator.DraggableRect }}
         >
           <SortableContext items={localActionIds} strategy={rectSortingStrategy}>
             <div className="grid gap-3 min-[720px]:auto-rows-fr min-[720px]:grid-cols-2">
