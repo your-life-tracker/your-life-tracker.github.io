@@ -4,6 +4,7 @@ import { Mail } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { Button } from "./ui/Button";
 import { Input } from "./ui/Input";
+import lifeTrackerLogo from "../assets/life-tracker-logo.svg";
 
 type AuthScreenProps = {
   onGuestMode: () => void;
@@ -44,8 +45,8 @@ export function AuthScreen({ onGuestMode }: AuthScreenProps) {
         <div className="flex h-11 w-11 items-center justify-center rounded-md bg-emerald-100 text-emerald-700">
           <Mail size={22} aria-hidden />
         </div>
-        <h1 className="mt-5 text-[26px] font-bold leading-tight">
-          Life Tracker
+        <h1 className="mt-5">
+          <img src={lifeTrackerLogo} alt="Life Tracker" className="-ml-[6px] h-[54px] w-[160px] object-contain object-left" />
         </h1>
         <p className="mt-2 text-[15px] leading-6 text-stone-600">
           이메일로 로그인 링크를 받아 시작하세요.
