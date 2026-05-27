@@ -10,6 +10,7 @@ import {
   useSensors,
   type DragEndEvent,
 } from "@dnd-kit/core";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import {
   arrayMove,
   rectSortingStrategy,
@@ -312,6 +313,7 @@ function PeriodSection({
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
+          modifiers={[restrictToParentElement]}
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={actionIds} strategy={rectSortingStrategy}>
