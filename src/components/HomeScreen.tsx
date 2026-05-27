@@ -23,6 +23,7 @@ import {
 import { supabase } from "../lib/supabase";
 import type { HomeUser } from "../lib/authMode";
 import type { Action } from "../lib/types";
+import lifeTrackerLogo from "../assets/life-tracker-logo.svg";
 
 type HomeScreenProps = {
   user: HomeUser;
@@ -153,15 +154,19 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
   return (
     <main className="min-h-svh bg-stone-50 text-stone-950">
       <header className="border-b border-stone-200 bg-stone-50/95 backdrop-blur">
-        <div className="mx-auto flex h-15 w-full max-w-2xl items-center justify-between px-4">
+        <div className="mx-auto flex min-h-[84px] w-full max-w-2xl items-center justify-between px-4 py-3">
           <div>
-            <h1 className="text-[17px] font-bold leading-tight">
+            <h1 className="leading-none">
               <button
                 type="button"
-                className="rounded-md bg-transparent p-0 text-left text-inherit font-inherit leading-inherit outline-none transition hover:text-stone-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
+                className="rounded-md bg-transparent p-0 text-left outline-none transition opacity-95 hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-950"
                 onClick={() => window.location.reload()}
               >
-                Life Tracker
+                <img
+                  className="-ml-[6px] h-[40px] w-[120px] object-contain object-left"
+                  src={lifeTrackerLogo}
+                  alt="Life Tracker"
+                />
               </button>
             </h1>
             <p className="mt-0.5 text-[12px] leading-tight text-stone-500">
