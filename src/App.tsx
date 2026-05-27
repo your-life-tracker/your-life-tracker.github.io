@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AuthScreen } from "./components/AuthScreen";
 import { HomeScreen } from "./components/HomeScreen";
+import { LoadingIndicator } from "./components/LoadingIndicator";
 import { useSession } from "./hooks/useSession";
 import {
   GUEST_MODE_STORAGE_KEY,
@@ -55,8 +56,8 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <main className="flex min-h-svh items-center justify-center bg-stone-50 text-sm text-stone-500">
-        세션을 확인하는 중...
+      <main className="min-h-svh bg-stone-50">
+        <LoadingIndicator className="min-h-svh" />
       </main>
     );
   }

@@ -6,6 +6,7 @@ import { ActionHistoryDialog } from "./ActionHistoryDialog";
 import { ActionItem } from "./ActionItem";
 import { ArchiveConfirmDialog } from "./ArchiveConfirmDialog";
 import { Button } from "./ui/Button";
+import { LoadingIndicator } from "./LoadingIndicator";
 import { SignOutConfirmDialog } from "./SignOutConfirmDialog";
 import {
   useCurrentDailyEntriesQuery,
@@ -151,6 +152,14 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
     );
   }
 
+  if (isInitialLoading) {
+    return (
+        <main className="min-h-svh bg-stone-50">
+          <LoadingIndicator className="min-h-svh" />
+        </main>
+    )
+  }
+
   return (
     <main className="min-h-svh bg-stone-50 text-stone-950">
       <header className="border-b border-stone-200 bg-stone-50/95 backdrop-blur">
@@ -186,31 +195,27 @@ export function HomeScreen({ user, onSignOut }: HomeScreenProps) {
       </header>
 
       <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-6">
-        {isInitialLoading ? (
-          <p className="py-16 text-center text-sm text-stone-500">
-            액션을 불러오는 중...
-          </p>
-        ) : actions.length === 0 ? (
-          <section className="flex min-h-[calc(100svh-180px)] items-center justify-center text-center">
-            <p className="text-sm text-stone-500">
-              목표를 세우고 꾸준히 실천해보세요
-            </p>
-          </section>
+        {actions.length === 0 ? (
+            <section className="flex min-h-[calc(100svh-180px)] items-center justify-center text-center">
+              <p className="text-sm text-stone-500">
+                목표를 세우고 꾸준히 실천해보세요
+              </p>
+            </section>
         ) : (
-          <div className="space-y-9">
-            <PeriodSection
-              title="주 단위"
-              subtitle={formatWeeklyRange(weeklyPeriod)}
-              actions={weeklyActions}
-              renderAction={renderAction}
-            />
-            <PeriodSection
-              title="월 단위"
-              subtitle={formatMonthlyRange(monthlyPeriod)}
-              actions={monthlyActions}
-              renderAction={renderAction}
-            />
-          </div>
+            <div className="space-y-9">
+              <PeriodSection
+                  title="주 단위"
+                  subtitle={formatWeeklyRange(weeklyPeriod)}
+                  actions={weeklyActions}
+                  renderAction={renderAction}
+              />
+              <PeriodSection
+                  title="월 단위"
+                  subtitle={formatMonthlyRange(monthlyPeriod)}
+                  actions={monthlyActions}
+                  renderAction={renderAction}
+              />
+            </div>
         )}
       </div>
 
